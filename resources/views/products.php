@@ -3,7 +3,7 @@
 /** @var bool $isStaff */
 /** @var array $products */
 /** @var \Illuminate\Support\ViewErrorBag $errors */
-$pageTitle = 'Products';
+$pageTitle = 'Inventory';
 include resource_path('views/layouts/header.php');
 ?>
 <?php if (!$ok): ?>

@@ -34,7 +34,13 @@ test('active staff can log in and only open staff pages', function () {
     ])->assertRedirect(route('dashboard'));
 
     $this->assertAuthenticatedAs($staff);
-    $this->get(route('dashboard'))->assertOk()->assertSee('My Transaction History');
+    $this->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('My Transaction History')
+        ->assertSee(route('catalog'), false)
+        ->assertDontSee(route('products'), false);
+    $this->get(route('catalog'))->assertOk()->assertSee('id="catalogProducts"', false);
+    $this->get(route('products'))->assertForbidden();
     $this->get(route('staff'))->assertForbidden();
     $this->post(route('products.store'), [])->assertForbidden();
 });

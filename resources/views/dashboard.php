@@ -39,7 +39,7 @@ include resource_path('views/layouts/header.php');
         <h2 class="font-semibold">Quick Actions</h2>
         <a href="<?= e(route('sales.create')) ?>" class="btn block">+ Record New Sale</a>
         <?php if($staff): ?>
-            <a href="<?= e(route('products')) ?>" class="btn-ghost">Browse Products</a>
+            <a href="<?= e(route('catalog')) ?>" class="btn-ghost">Browse Products</a>
             <a href="<?= e(route('transactions')) ?>" class="btn-ghost">My Transaction History</a>
         <?php else: ?>
             <a href="<?= e(route('products')) ?>" class="btn-dark block">+ Add Product</a>

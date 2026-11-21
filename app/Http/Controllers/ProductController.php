@@ -30,6 +30,21 @@ class ProductController extends Controller
         return view('products', compact('products', 'categoryOptions'));
     }
 
+    public function catalog()
+    {
+        $products = Product::with('category')->orderBy('name')->get()
+            ->map(fn (Product $product) => [
+                'name' => $product->name,
+                'category' => $product->category->name,
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'weight' => $product->weight,
+                'unit' => $product->unit,
+            ])->all();
+
+        return view('product-catalog', compact('products'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

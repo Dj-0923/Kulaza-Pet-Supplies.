@@ -32,18 +32,18 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::put('/profile/mail-settings', [MailSettingsController::class, 'update'])->name('profile.mail-settings.update');
         Route::delete('/profile/mail-settings', [MailSettingsController::class, 'destroy'])->name('profile.mail-settings.destroy');
     });
-    Route::get('/products', [ProductController::class, 'index'])->name('products');
+    Route::get('/catalog', [ProductController::class, 'catalog'])->name('catalog');
     Route::get('/record-sale', [SalesController::class, 'create'])->name('sales.create');
     Route::post('/record-sale', [SalesController::class, 'store'])->name('sales.store');
     Route::get('/transactions', [SalesController::class, 'transactions'])->name('transactions');
 
     Route::middleware('role:admin')->group(function () {
+        Route::get('/products', [ProductController::class, 'index'])->name('products');
         Route::post('/products', [ProductController::class, 'store'])->name('products.store');
         Route::post('/products/{product}/stock', [ProductController::class, 'addStock'])->name('products.stock');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
         Route::delete('/categories/{category}', [ProductController::class, 'destroyCategory'])->name('categories.destroy');
         Route::get('/sales-reports', [ReportController::class, 'sales'])->name('reports');
-        Route::get('/monthly-records', [ReportController::class, 'monthly'])->name('monthly');
         Route::get('/price-records', [ReportController::class, 'priceRecords'])->name('price-records');
         Route::delete('/price-records/{priceRecord}', [ReportController::class, 'destroyPriceRecord'])->name('price-records.destroy');
         Route::delete('/transactions/{transaction}', [SalesController::class, 'destroyTransaction'])->name('transactions.destroy');

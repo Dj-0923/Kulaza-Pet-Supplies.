@@ -44,10 +44,12 @@ $selectedMonthLabel = $months[$month];
 $categories = array_values(array_unique(array_column($records, 'category')));
 sort($categories);
 $productOptions = [];
+$productCategories = [];
 foreach ($records as $r) {
-    if ($cat === '' || $r['category'] === $cat) {
-        $key = $productKey($r);
-        if (!array_key_exists($key, $productOptions)) $productOptions[$key] = $r['product'];
+    $key = $productKey($r);
+    if (!array_key_exists($key, $productOptions)) {
+        $productOptions[$key] = $r['product'];
+        $productCategories[$key] = $r['category'];
     }
 }
 asort($productOptions, SORT_NATURAL | SORT_FLAG_CASE);
@@ -57,7 +59,7 @@ if ($prod !== '' && !array_key_exists($prod, $productOptions)) {
 }
 $selectedProductName = $productOptions[$prod] ?? '';
 
-// ---- Category + product filter (used by stats and chart) ----
+// ---- Category + product filter (used by chart and table) ----
 $base = array_values(array_filter($records, fn($r) =>
     ($cat === '' || $r['category'] === $cat) && ($prod === '' || $productKey($r) === $prod)
 ));
@@ -73,21 +75,6 @@ $total    = count($rows);
 $pages    = max(1, (int) ceil($total / $perPage));
 $page     = min($page, $pages);
 $pageRows = array_slice($rows, ($page - 1) * $perPage, $perPage);
-
-// ---- Stat cards: Today / This Week / This Month ----
-$weekStart  = date('Y-m-d', strtotime('monday this week'));
-$monthStart = date('Y-m-01');
-$periods = [
-    'Today'      => fn($d) => $d === $today,
-    'This Week'  => fn($d) => $d >= $weekStart && $d <= $today,
-    'This Month' => fn($d) => $d >= $monthStart && $d <= $today,
-];
-$stats = [];
-foreach ($periods as $label => $in) {
-    $list = array_values(array_filter($base, fn($r) => $in($r['date'])));
-    usort($list, fn($a, $b) => strcmp($b['date'], $a['date']));
-    $stats[] = ['label' => $label, 'count' => count($list), 'latest' => $list[0] ?? null];
-}
 
 // ---- Chart data: one series per product ----
 if ($month === 'all') {
@@ -137,11 +124,6 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
 .pr-filters select{height:44px;padding:0 14px;border-radius:10px;border:1px solid #1e251e;background:#0c100c;color:inherit;min-width:0}
 .pr-go{height:44px;padding:0 28px;border-radius:10px;border:0;background:#2f8f3a;color:#fff;font-weight:600;cursor:pointer}
 .pr-go:hover{background:#3fb14c}
-.pr-stat{border:1px solid #1e251e;border-radius:12px;padding:14px 18px;background:#0c100c;min-height:96px}
-.pr-stat.rise{border-left:3px solid #e5675a}.pr-stat.drop{border-left:3px solid #3fb14c}
-.pr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.pr-cnt{font-size:12px;background:#1b2a1d;color:#9fd6a6;border-radius:99px;padding:2px 10px}
-.pr-hl{font-size:20px;font-weight:600}.pr-hl span{font-size:15px}
 .pr-mute{color:#8d988d;font-size:12px}
 .pr-up{color:#e5675a}.pr-down{color:#3fb14c}
 .pr-empty{padding:28px;text-align:center;color:#8d988d}
@@ -178,19 +160,19 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
                 <?php endforeach; ?>
             </div>
         </div>
-        <select name="category" aria-label="Category" onchange="this.form.product.value='';this.form.submit()">
+        <select name="category" aria-label="Category">
             <option value="">All Categories</option>
-            <?php foreach ($categories as $c): ?>
-                <option <?= $cat === $c ? 'selected' : '' ?>><?= e($c) ?></option>
+            <?php foreach ($categories as $category): ?>
+                <option value="<?= e($category) ?>" <?= $cat === $category ? 'selected' : '' ?>><?= e($category) ?></option>
             <?php endforeach; ?>
         </select>
-        <select name="product" aria-label="Product" onchange="this.form.submit()">
+        <select name="product" aria-label="Product">
             <option value="">All Products</option>
             <?php foreach ($productOptions as $key => $name): ?>
-                <option value="<?= e($key) ?>" <?= $prod === $key ? 'selected' : '' ?>><?= e($name) ?></option>
+                <option value="<?= e($key) ?>" <?= $prod === $key ? 'selected' : '' ?> data-category="<?= e($productCategories[$key]) ?>"><?= e($name) ?></option>
             <?php endforeach; ?>
         </select>
-        <select name="sort" aria-label="Sort" onchange="this.form.submit()">
+        <select name="sort" aria-label="Sort">
             <option value="new" <?= $sort === 'new' ? 'selected' : '' ?>>Newest first</option>
             <option value="old" <?= $sort === 'old' ? 'selected' : '' ?>>Oldest first</option>
             <option value="big" <?= $sort === 'big' ? 'selected' : '' ?>>Biggest change</option>
@@ -211,11 +193,30 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
             menu.hidden = !opening;
             trigger.setAttribute('aria-expanded', String(opening));
         });
+        const categorySelect = picker.closest('form').elements.category;
+        const productSelect = picker.closest('form').elements.product;
+        const productOptions = [...productSelect.options].slice(1);
+        const updateProducts = clearInvalidSelection => {
+            productOptions.forEach(option => {
+                option.hidden = categorySelect.value !== '' && option.dataset.category !== categorySelect.value;
+            });
+            if (clearInvalidSelection && productSelect.selectedOptions[0].hidden) {
+                productSelect.value = '';
+            }
+        };
+        categorySelect.addEventListener('change', () => updateProducts(true));
+        updateProducts(false);
+
         menu.addEventListener('click', event => {
             const option = event.target.closest('button[data-month]');
             if (!option) return;
             value.value = option.dataset.month;
-            picker.closest('form').submit();
+            trigger.querySelector('span').textContent = option.textContent;
+            menu.querySelectorAll('button[data-month]').forEach(monthOption => {
+                monthOption.setAttribute('aria-selected', String(monthOption === option));
+            });
+            menu.hidden = true;
+            trigger.setAttribute('aria-expanded', 'false');
         });
         document.addEventListener('click', event => {
             if (!picker.contains(event.target)) {
@@ -232,35 +233,6 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
         });
     })();
 </script>
-
-<!-- Stats -->
-<div class="grid grid-cols-3 gap-4 mb-6">
-    <?php foreach ($stats as $s):
-        $l  = $s['latest'];
-        $ch = $l ? $l['new_price'] - $l['old_price'] : 0;
-        $pp = $l && $l['old_price'] > 0 ? $ch / $l['old_price'] * 100 : 0;
-        $initialPrice = $l && $l['new_price'] === $l['old_price'];
-    ?>
-        <div class="pr-stat <?= $l ? ($ch > 0 ? 'rise' : 'drop') : '' ?>">
-            <div class="pr-top">
-                <span class="pr-mute"><?= e($s['label']) ?></span>
-                <span class="pr-cnt"><?= (int) $s['count'] ?> <?= $s['count'] === 1 ? 'record' : 'records' ?></span>
-            </div>
-            <?php if ($l): ?>
-                <div class="pr-hl"><?= e($l['product']) ?>
-                    <?php if ($initialPrice): ?>
-                        <span class="pr-pill">Initial price</span>
-                    <?php else: ?>
-                        <span class="<?= $ch > 0 ? 'pr-up' : 'pr-down' ?>"><?= $ch > 0 ? '▲ +' : '▼ ' ?><?= number_format($pp, 1) ?>%</span>
-                    <?php endif; ?>
-                </div>
-                <div class="pr-mute mt-1"><?= e($peso($l['old_price'])) ?> to <?= e($peso($l['new_price'])) ?> on <?= e($l['date']) ?></div>
-            <?php else: ?>
-                <div class="pr-mute" style="font-size:15px">No Data</div>
-            <?php endif; ?>
-        </div>
-    <?php endforeach; ?>
-</div>
 
 <!-- Graph -->
 <div class="card bg-[#0b0e0b]! mb-6">
@@ -297,13 +269,9 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
                     <td><span class="pr-pill"><?= e($r['category']) ?></span></td>
                     <td><?= e($peso($r['old_price'])) ?></td>
                     <td><strong><?= e($peso($r['new_price'])) ?></strong></td>
-                    <?php if ((float) $r['new_price'] === (float) $r['old_price']): ?>
-                        <td class="pr-mute">Initial price</td>
-                    <?php else: ?>
-                        <td class="<?= $ch > 0 ? 'pr-up' : 'pr-down' ?>">
-                            <?= $ch > 0 ? '▲' : '▼' ?> <?= e($peso(abs($ch))) ?> (<?= $ch > 0 ? '+' : '' ?><?= number_format($pp, 1) ?>%)
-                        </td>
-                    <?php endif; ?>
+                    <td class="<?= $ch > 0 ? 'pr-up' : 'pr-down' ?>">
+                        <?= $ch > 0 ? '▲' : '▼' ?> <?= e($peso(abs($ch))) ?> (<?= $ch > 0 ? '+' : '' ?><?= number_format($pp, 1) ?>%)
+                    </td>
                     <td><?= e($r['changed_by'] ?? '-') ?></td>
                     <td>
                         <form method="POST" action="<?= e(route('price-records.destroy', $r['id'])) ?>" onsubmit="return confirm('Delete this price record?');">

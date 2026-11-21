@@ -18,18 +18,17 @@ include resource_path('views/layouts/header.php');
 <div class="card">You do not have access to this page.</div>
 <?php else: ?>
 <form class="card flex flex-wrap gap-3 items-end mb-4" id="reportFilters" aria-label="Filter sales reports">
-    <div><label class="lbl" for="rf">Date From</label><input id="rf" type="date" name="from" class="inp" onchange="render()"></div>
-    <div><label class="lbl" for="rt">Date To</label><input id="rt" type="date" name="to" class="inp" onchange="render()"></div>
+    <div><label class="lbl" for="rf">Date From</label><input id="rf" type="date" name="from" class="inp"></div>
+    <div><label class="lbl" for="rt">Date To</label><input id="rt" type="date" name="to" class="inp"></div>
     <div><label class="lbl" for="rc">Category</label>
-        <select id="rc" name="category" class="inp" onchange="render()"><option value="">All Categories</option><?php foreach($cats as $c): ?><option value="<?= e($c) ?>"><?= e($c) ?></option><?php endforeach; ?></select></div>
+        <select id="rc" name="category" class="inp"><option value="">All Categories</option><?php foreach($cats as $c): ?><option value="<?= e($c) ?>"><?= e($c) ?></option><?php endforeach; ?></select></div>
     <div><label class="lbl" for="rp">Payment Method</label>
-        <select id="rp" name="payment" class="inp" onchange="render()"><option value="">All Payment Methods</option><?php foreach($payments as $method): ?><option value="<?= e($method) ?>"><?= e($method) ?></option><?php endforeach; ?></select></div>
+        <select id="rp" name="payment" class="inp"><option value="">All Payment Methods</option><?php foreach($payments as $method): ?><option value="<?= e($method) ?>"><?= e($method) ?></option><?php endforeach; ?></select></div>
     <button type="submit" id="apply" class="btn">Apply Filters</button>
     <button type="reset" id="reset" class="btn-dark">Reset</button>
 </form>
 <p id="reportSelection" class="text-xs text-gray-400 mb-4" role="status"></p>
 <div id="reportPrompt" class="card text-sm text-gray-400 mb-4 hidden">No sales records yet.</div>
-<div id="reportEmpty" class="card text-sm text-gray-400 mb-4 hidden">No records match the selected filters.</div>
 <div id="reportResults" class="hidden">
     <div class="grid md:grid-cols-3 gap-4 mb-4" id="rstats"></div>
     <div class="grid md:grid-cols-3 gap-4">
@@ -37,6 +36,18 @@ include resource_path('views/layouts/header.php');
         <div class="card text-sm space-y-3" id="summary"></div>
     </div>
 </div>
+<style>
+    @keyframes report-bar-grow {
+        from { height: 0; }
+        to { height: var(--report-bar-height); }
+    }
+    .report-bar.is-animated {
+        animation: report-bar-grow 700ms cubic-bezier(.2,.75,.25,1) both;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .report-bar.is-animated { animation: none; }
+    }
+</style>
 <?php endif; ?>
 <?php if ($ok): ob_start(); ?><script>
     // Each sale: date (YYYY-MM-DD), payment, items[{name, category, price, qty, unit}].
@@ -64,9 +75,7 @@ include resource_path('views/layouts/header.php');
         const c = $('rc').value, p = $('rp').value, f = $('rf').value, t = $('rt').value;
         $('reportSelection').textContent = `Showing ${f || 'any date'} to ${t || 'any date'} · ${c ? 'Category: ' + c : 'All categories'} · ${p ? 'Payment: ' + p : 'All payment methods'} · ${L.length} transactions`;
         $('reportPrompt').classList.add('hidden');
-        $('reportEmpty').classList.toggle('hidden', L.length > 0);
-        $('reportResults').classList.toggle('hidden', sales.length === 0 || L.length === 0);
-        if (!sales.length) return;
+        $('reportResults').classList.remove('hidden');
         const T = daysAgo(0), all = !c;
         const box = (k, v) => `<div class="card"><p class="text-xs text-gray-400">${k}</p><p class="text-3xl font-bold">${peso(v)}</p></div>`;
         $('rstats').innerHTML = box('Today', sum(L.filter(s => s.date === T))) + box('This Week', sum(L.filter(s => s.date >= daysAgo(6)))) + box('This Month', sum(L.filter(s => s.date.slice(0, 7) === T.slice(0, 7))));
@@ -74,7 +83,10 @@ include resource_path('views/layouts/header.php');
             label: new Date(d + 'T00:00').toLocaleDateString('en-US', {weekday: 'short'}), v: sum(L.filter(s => s.date === d))}; });
         const mx = Math.max(1, ...days.map(x => x.v));
         $('ctitle').textContent = 'Last 7-days' + (all ? '' : ' - ' + c + ' sales only');
-        $('chart').innerHTML = days.map(x => `<div class="flex-1 flex flex-col justify-end items-center h-full text-[10px] text-gray-400"><span>${peso(x.v)}</span><div class="w-full bg-green-500 rounded-sm" style="height:${Math.max(2, x.v / mx * 85)}%"></div><span class="mt-1">${x.label}</span></div>`).join('');
+        $('chart').innerHTML = days.map(x => {
+            const barHeight = Math.max(2, x.v / mx * 85);
+            return `<div class="flex-1 flex flex-col justify-end items-center h-full text-[10px] text-gray-400"><span>${peso(x.v)}</span><div class="report-bar${x.v > 0 ? ' is-animated' : ''} w-full bg-green-500 rounded-sm" style="--report-bar-height:${barHeight}%;height:${barHeight}%"></div><span class="mt-1">${x.label}</span></div>`;
+        }).join('');
         const m = {}; L.forEach(s => s.items.forEach(i => {
             const key = i.name + ' (' + i.unit + ')';
             m[key] = (m[key] || 0) + i.qty;

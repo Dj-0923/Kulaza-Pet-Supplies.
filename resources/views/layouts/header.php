@@ -60,18 +60,18 @@
             $icons = [
                 'dashboard'    => '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
                 'products'     => '<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+                'catalog'      => '<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
                 'sales.create' => '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/>',
                 'transactions' => '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
                 'reports'      => '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
-                'monthly'      => '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>',
                 'price-records' => '<path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
                 'staff'        => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
                 'profile'      => '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
                 'logout'       => '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
             ];
-            // Staff only see Dashboard, Products (view only), Record Sale, and Transaction History.
-            $staffRoutes = ['dashboard','products','sales.create','transactions'];
-            $nav = ['dashboard'=>'Dashboard','products'=>'Products','sales.create'=>'Record Sale','transactions'=>'Transaction History','reports'=>'Sales Reports','monthly'=>'Monthly Records','price-records'=>'Price Records','staff'=>'Staff Accounts'];
+            // Staff see the read-only Products catalog, not Inventory management.
+            $staffRoutes = ['dashboard','catalog','sales.create','transactions'];
+            $nav = ['dashboard'=>'Dashboard','products'=>'Inventory','catalog'=>'Products','sales.create'=>'Record Sale','transactions'=>'Transaction History','reports'=>'Sales Reports','price-records'=>'Price Records','staff'=>'Staff Accounts'];
          ?>
         <?php foreach($nav as $route => $label): ?>
             <?php if(!$isStaff || in_array($route, $staffRoutes)): ?>
@@ -82,12 +82,10 @@
             <?php endif; ?>
         <?php endforeach; ?>
         <?php if (!$isStaff): ?>
-            <div class="mt-auto mb-3 rounded-xl border border-[#1f271f] bg-[#0b0e0b] p-2">
-                <a href="<?= e(route('profile')) ?>" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white <?= e(request()->routeIs('profile*') ? 'bg-[#1a2a1a]' : 'hover:bg-[#141914]') ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><?= $icons['profile'] ?></svg>
-                    <span>Profile</span>
-                </a>
-            </div>
+            <a href="<?= e(route('profile')) ?>" class="mt-auto flex items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 text-white <?= e(request()->routeIs('profile*') ? 'bg-[#1a2a1a]' : 'hover:bg-[#141914]') ?>">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><?= $icons['profile'] ?></svg>
+                <span>Profile</span>
+            </a>
         <?php endif; ?>
         <form method="POST" action="<?= e(route('logout')) ?>" class="<?= $isStaff ? 'mt-auto' : '' ?>">
             <?= csrf_field() ?>

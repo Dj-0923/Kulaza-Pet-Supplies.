@@ -32,12 +32,8 @@ function createSaleProduct(int $stock = 5): Product
     ]);
 }
 
-test('daily records show only dates with saved sales and aggregate transaction totals', function () {
+test('saved sales update stock and persist transaction details', function () {
     $product = createSaleProduct();
-
-    $this->get(route('monthly'))
-        ->assertOk()
-        ->assertSee('No sales records for this month and selection.');
 
     foreach ([2, 1] as $quantity) {
         $this->post(route('sales.store'), [
@@ -58,12 +54,6 @@ test('daily records show only dates with saved sales and aggregate transaction t
     expect($product->stock)->toBe(2.0);
     expect(Transaction::count())->toBe(2);
     expect(Transaction::first()->reference_number)->toBeNull();
-
-    $this->get(route('monthly'))
-        ->assertOk()
-        ->assertSee(now()->format('Y-m-d'))
-        ->assertSee('2', false)
-        ->assertSee('37.50');
 });
 
 test('gcash sales require and save a reference number', function () {
@@ -98,9 +88,10 @@ test('gcash sales require and save a reference number', function () {
         ->assertSee('Transaction No.')
         ->assertSee('Payment Method')
         ->assertSee('See items')
-        ->assertSee('View Ref. No.')
+        ->assertDontSee('View Ref. No.')
         ->assertSee('data-transaction-action-toggle', false)
         ->assertSee('data-reference-number="1234567890123"', false)
+        ->assertSee('id="transactionDetailsItemsTitle"', false)
         ->assertSee('id="transactionDetailsItems"', false)
         ->assertSee('Reference No.');
 });
@@ -169,10 +160,6 @@ test('card is not offered or accepted as a payment method', function () {
     $this->get(route('reports'))
         ->assertOk()
         ->assertDontSee('<option>Card</option>', false);
-
-    $this->get(route('monthly'))
-        ->assertOk()
-        ->assertDontSee('<option value="Card">Card</option>', false);
 });
 
 test('category filters are hidden without products and shown when products exist', function () {
@@ -200,56 +187,23 @@ test('category filters are hidden without products and shown when products exist
         ->assertSee('makeTabs(box, scat, c => { scat = c; renderSTabs(); renderProducts(); }, categories)', false);
 });
 
-test('monthly records month picker spans from 2020 through the current year', function () {
-    $year = now()->format('Y');
+test('products catalog shows read-only product cards with category and search filters', function () {
+    createSaleProduct();
 
-    $this->get(route('monthly', ['month' => '2020-06']))
+    $this->get(route('catalog'))
         ->assertOk()
-        ->assertSee('value="2020-06" min="2020-01" max="'.$year.'-12"', false);
-
-    $this->get(route('monthly', ['month' => '2019-06']))
-        ->assertOk()
-        ->assertSee('value="'.now()->format('Y-m').'" min="2020-01" max="'.$year.'-12"', false);
-});
-
-test('monthly record filters apply selected month category and payment method', function () {
-    $dogFood = createSaleProduct();
-    $catCategory = Category::create(['name' => 'Cat Supplies']);
-    $catFood = Product::create([
-        'category_id' => $catCategory->id,
-        'name' => 'Cat Food',
-        'price' => 30,
-        'stock' => 5,
-    ]);
-
-    $this->post(route('sales.store'), [
-        'customer_name' => 'Cash Customer',
-        'payment_method' => 'Cash',
-        'items' => [['product_id' => $dogFood->id, 'quantity' => 2]],
-    ])->assertRedirect(route('sales.create'));
-
-    $this->post(route('sales.store'), [
-        'customer_name' => 'GCash Customer',
-        'payment_method' => 'GCash',
-        'reference_number' => 'GCASH-123456',
-        'items' => [['product_id' => $catFood->id, 'quantity' => 1]],
-    ])->assertRedirect(route('sales.create'));
-
-    $this->get(route('monthly', [
-        'month' => now()->format('Y-m'),
-        'category' => 'Pet Food',
-        'payment' => 'Cash',
-    ]))
-        ->assertOk()
-        ->assertSee('id="monthly-record-category"', false)
-        ->assertSee('value="Pet Food" selected', false)
-        ->assertSee('value="Cash" selected', false)
-        ->assertSee('Category: Pet Food')
-        ->assertSee('Payment: Cash')
-        ->assertSee('Dog Food (pcs)')
-        ->assertDontSee('Cat Food (pcs)')
-        ->assertSee('Month sales total: ₱25.00 · 1 transactions')
-        ->assertSee('₱25.00');
+        ->assertSee('data-page="products"', false)
+        ->assertSee('id="catalogCategories"', false)
+        ->assertSee('id="catalogSearch"', false)
+        ->assertSee('data-catalog-product', false)
+        ->assertSee('>Inventory</span>', false)
+        ->assertSee('>Products</span>', false)
+        ->assertSee('Dog Food')
+        ->assertSee('Pet Food')
+        ->assertSee('₱12.50 /pcs')
+        ->assertSee('5 pcs in stock')
+        ->assertDontSee('data-product-action-toggle', false)
+        ->assertDontSee('+ Add Product');
 });
 
 test('sales report exposes responsive filters and reports matching category and payment data', function () {
@@ -277,7 +231,8 @@ test('sales report exposes responsive filters and reports matching category and 
     $this->get(route('reports'))
         ->assertOk()
         ->assertSee('id="reportFilters"', false)
-        ->assertSee('onchange="render()"', false)
+        ->assertDontSee('onchange="render()"', false)
+        ->assertSee("addEventListener('submit'", false)
         ->assertSee('value="Pet Food"', false)
         ->assertSee('value="Cat Supplies"', false)
         ->assertSee('value="Cash"', false)
@@ -360,7 +315,7 @@ test('admin can add a product and category together with optional weight', funct
         ->assertSee('2.5 kg');
 });
 
-test('adding a product records its initial category and price in price records', function () {
+test('adding a product saves its initial price but does not show it as a price change', function () {
     $this->post(route('products.store'), [
         'name' => 'Freshwater Fish Food',
         'category' => '__new_category__',
@@ -380,10 +335,40 @@ test('adding a product records its initial category and price in price records',
 
     $this->get(route('price-records'))
         ->assertOk()
-        ->assertSee('Freshwater Fish Food')
-        ->assertSee('Aquarium')
-        ->assertSee('Initial price')
-        ->assertSee('87.50');
+        ->assertDontSee('Freshwater Fish Food')
+        ->assertDontSee('Initial price')
+        ->assertDontSee('87.50');
+});
+
+test('price records show changed prices but omit initial and unchanged prices', function () {
+    $product = createSaleProduct();
+
+    foreach ([
+        ['Initial Only', 10, 10],
+        ['Unchanged Price', 12.50, 12.50],
+        ['Changed Price', 12.50, 15],
+    ] as [$name, $oldPrice, $newPrice]) {
+        PriceRecord::create([
+            'product_id' => $product->id,
+            'product_name' => $name,
+            'category' => 'Pet Food',
+            'old_price' => $oldPrice,
+            'new_price' => $newPrice,
+            'changed_by' => 'Admin',
+            'changed_at' => now()->toDateString(),
+        ]);
+    }
+
+    $this->get(route('price-records'))
+        ->assertOk()
+        ->assertSee('Changed Price')
+        ->assertSee('15.00')
+        ->assertDontSee('Initial Only')
+        ->assertDontSee('Unchanged Price')
+        ->assertDontSee('Initial price')
+        ->assertDontSee('Today')
+        ->assertDontSee('This Week')
+        ->assertDontSee('This Month');
 });
 
 test('invalid product data is rejected without creating product or category', function () {
@@ -472,10 +457,6 @@ test('deleted category is hidden from report filters while past sales remain', f
         ->assertRedirect(route('products'));
     $this->delete(route('categories.destroy', $category))
         ->assertRedirect(route('products'));
-
-    $this->get(route('monthly'))
-        ->assertOk()
-        ->assertDontSee('<option value="Feeds">Feeds</option>', false);
 
     $this->get(route('reports'))
         ->assertOk()
@@ -594,7 +575,7 @@ test('stock edits reject negative, invalid, or overflowing quantities', function
 });
 
 test('backend-backed pages render successfully', function () {
-    foreach (['dashboard', 'products', 'sales.create', 'transactions', 'reports', 'monthly', 'price-records'] as $route) {
+    foreach (['dashboard', 'products', 'catalog', 'sales.create', 'transactions', 'reports', 'price-records'] as $route) {
         $this->get(route($route))
             ->assertOk()
             ->assertSee('data-theme-toggle', false)
@@ -602,7 +583,8 @@ test('backend-backed pages render successfully', function () {
             ->assertSee('js/theme.js');
     }
 
-    $this->get(route('products'))->assertSee('data-page="products"', false);
+    $this->get(route('products'))->assertSee('data-page="inventory"', false);
+    $this->get(route('catalog'))->assertSee('data-page="products"', false);
     $this->get(route('sales.create'))->assertSee('data-page="record-sale"', false);
 });
 

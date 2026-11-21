@@ -47,9 +47,6 @@ include resource_path('views/layouts/header.php');
                             </button>
                             <div id="transaction-actions-<?= e($t['id']) ?>" class="hidden fixed z-[80] min-w-40 rounded-lg border border-[#1f271f] bg-[#141914] p-1 shadow-xl" data-transaction-action-menu>
                                 <button type="button" class="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-[#1f271f]" data-view-transaction>View items</button>
-                                <?php if ($t['payment'] === 'GCash' && !empty($t['reference_number'])): ?>
-                                    <button type="button" class="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-[#1f271f]" data-view-transaction>View Ref. No.</button>
-                                <?php endif; ?>
                                 <form method="POST" action="<?= e(route('transactions.destroy', $t['id'])) ?>" onsubmit="return confirm('Delete this transaction? Product stock will not be changed.');">
                                     <?= csrf_field() ?>
                                     <?= method_field('DELETE') ?>
@@ -81,7 +78,8 @@ include resource_path('views/layouts/header.php');
             <div><p class="text-xs text-gray-400">Date</p><p id="transactionDetailsDate" class="mt-1 font-semibold"></p></div>
             <div id="transactionDetailsReferenceWrap" class="hidden"><p class="text-xs text-gray-400">Reference No.</p><p id="transactionDetailsReference" class="mt-1 break-all font-semibold"></p></div>
         </div>
-        <div id="transactionDetailsItems" class="mt-4 max-h-64 space-y-2 overflow-y-auto"></div>
+        <h3 id="transactionDetailsItemsTitle" class="mt-4 mb-2 text-sm font-semibold">Items</h3>
+        <div id="transactionDetailsItems" class="max-h-64 space-y-2 overflow-y-auto" aria-labelledby="transactionDetailsItemsTitle"></div>
         <div class="mt-4 flex justify-between border-t border-[#252d25] pt-3 font-bold">
             <span>Total</span><span id="transactionDetailsTotal"></span>
         </div>

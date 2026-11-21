@@ -30,6 +30,7 @@ a.btn-red {
     transition: background-color 220ms ease, border-color 220ms ease, color 220ms ease;
 }
 
+main[data-page="inventory"] button,
 main[data-page="products"] button,
 main[data-page="record-sale"] button {
     transition: background-color 220ms ease, border-color 220ms ease, color 220ms ease, transform 160ms ease, filter 160ms ease, box-shadow 160ms ease;
@@ -123,6 +124,28 @@ html.light-mode aside button:hover {
     background-color: #d6e0d3 !important;
 }
 
+aside button {
+    transition: none;
+}
+
+aside button:hover:not(:disabled),
+aside button:active:not(:disabled) {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+}
+
+button.pr-period-trigger {
+    transition: none;
+}
+
+button.pr-period-trigger:hover:not(:disabled),
+button.pr-period-trigger:active:not(:disabled) {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+}
+
 html.light-mode aside a[class*="bg-[#1a2a1a]"] {
     background-color: #d5e5d1 !important;
 }
@@ -175,6 +198,10 @@ html.light-mode main textarea {
     color-scheme: light;
 }
 
+html.light-mode main select.inp {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23202a20' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+}
+
 html.light-mode main .tbl td {
     border-color: #e0e6de;
 }
@@ -194,6 +221,49 @@ html.light-mode main [class*="bg-[#2e7d32]"] {
 html.light-mode main [class*="bg-[#1a2a1a]"],
 html.light-mode main [class*="bg-[#1b2a1d]"] {
     background-color: #e5f2e3 !important;
+}
+
+html.light-mode main .pr-period-option:hover,
+html.light-mode main .pr-period-option[aria-selected="true"] {
+    background-color: #d6e0d3 !important;
+    color: #202a20 !important;
+}
+
+html.light-mode main [data-product-action-menu] button,
+html.light-mode main [data-action-menu] button,
+html.light-mode main [data-transaction-action-menu] button,
+html.light-mode main #categoryPickerMenu button {
+    transition: none;
+}
+
+html.light-mode main [data-product-action-menu] button:hover:not(:disabled),
+html.light-mode main [data-product-action-menu] button:active:not(:disabled),
+html.light-mode main [data-action-menu] button:hover:not(:disabled),
+html.light-mode main [data-action-menu] button:active:not(:disabled),
+html.light-mode main [data-transaction-action-menu] button:hover:not(:disabled),
+html.light-mode main [data-transaction-action-menu] button:active:not(:disabled),
+html.light-mode main #categoryPickerMenu button:hover:not(:disabled),
+html.light-mode main #categoryPickerMenu button:active:not(:disabled) {
+    transform: none;
+    filter: none;
+    box-shadow: none;
+}
+
+html.light-mode main [data-product-action-menu] button:hover,
+html.light-mode main [data-action-menu] button:not([data-delete-account]):hover,
+html.light-mode main [data-transaction-action-menu] button:not([data-delete-transaction]):hover,
+html.light-mode main #categoryPickerOptions [data-select-category]:hover,
+html.light-mode main #chooseNewCategory:hover {
+    background-color: #d6e0d3 !important;
+    color: #202a20 !important;
+}
+
+html.light-mode main [data-delete-product]:hover,
+html.light-mode main [data-delete-account]:hover,
+html.light-mode main [data-delete-transaction]:hover,
+html.light-mode main [data-delete-category]:hover {
+    background-color: #fce8e6 !important;
+    color: #b42318 !important;
 }
 
 html.light-mode main .pr-cnt,

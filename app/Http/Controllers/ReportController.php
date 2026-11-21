@@ -13,14 +13,10 @@ class ReportController extends Controller
         return view('sales-reports', ['sales' => $this->saleRows()]);
     }
 
-    public function monthly()
-    {
-        return view('monthly-records', ['sales' => $this->saleRows()]);
-    }
-
     public function priceRecords()
     {
-        $records = PriceRecord::orderByDesc('changed_at')->orderByDesc('id')->get()
+        $records = PriceRecord::whereColumn('old_price', '!=', 'new_price')
+            ->orderByDesc('changed_at')->orderByDesc('id')->get()
             ->map(fn (PriceRecord $record) => [
                 'id' => $record->id,
                 'product_id' => $record->product_id,
