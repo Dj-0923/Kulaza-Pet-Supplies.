@@ -37,6 +37,7 @@ This project includes a Docker setup for a Render Web Service and uses PostgreSQ
    - `DB_URL` set to the PostgreSQL **Internal Database URL**
 
    Keep `APP_KEY` and the database URL secret; do not commit them to the repository.
+   The application honors Render's forwarded HTTPS protocol and port when generating URLs.
 4. Leave **Docker Command** and **Pre-Deploy Command** blank. The container entrypoint runs database migrations and starts Apache.
 5. To create the initial administrator without shell access, temporarily set `ADMIN_NAME`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD` as service environment variables. The entrypoint runs `php artisan app:sync-admin` on startup; remove these variables after signing in so the password is not reset on later restarts.
 

@@ -19,6 +19,16 @@ test('users must log in before opening application pages', function () {
         ->assertSee('js/theme.js');
 });
 
+test('login form uses https when served behind a secure proxy', function () {
+    $this->withServerVariables([
+        'HTTP_X_FORWARDED_PROTO' => 'https',
+        'HTTP_X_FORWARDED_PORT' => '443',
+    ])->get('/login')
+        ->assertOk()
+        ->assertSee('action="https://', false)
+        ->assertDontSee('action="http://', false);
+});
+
 test('active staff can log in and only open staff pages', function () {
     $staff = User::create([
         'name' => 'Alex Staff',
