@@ -335,12 +335,14 @@ test('adding a product saves its initial price but does not show it as a price c
 
     $this->get(route('price-records'))
         ->assertOk()
-        ->assertDontSee('Freshwater Fish Food')
+        ->assertSee('"product":"Freshwater Fish Food"', false)
+        ->assertSee('"base":87.5', false)
+        ->assertDontSee('<td>Freshwater Fish Food</td>', false)
         ->assertDontSee('Initial price')
         ->assertDontSee('87.50');
 });
 
-test('price records show changed prices but omit initial and unchanged prices', function () {
+test('price chart uses initial prices while the table only shows price changes', function () {
     $product = createSaleProduct();
 
     foreach ([
@@ -363,8 +365,10 @@ test('price records show changed prices but omit initial and unchanged prices', 
         ->assertOk()
         ->assertSee('Changed Price')
         ->assertSee('15.00')
-        ->assertDontSee('Initial Only')
-        ->assertDontSee('Unchanged Price')
+        ->assertSee('"product":"Initial Only"', false)
+        ->assertSee('"base":10', false)
+        ->assertDontSee('<td>Initial Only</td>', false)
+        ->assertDontSee('<td>Unchanged Price</td>', false)
         ->assertDontSee('Initial price')
         ->assertDontSee('Today')
         ->assertDontSee('This Week')
@@ -609,6 +613,11 @@ test('price records page renders records and chart data', function () {
         ->assertSee('Pet Food')
         ->assertSee('role="listbox"', false)
         ->assertSee('max-height:288px;overflow-y:auto', false)
+        ->assertSee('>Apply</button>', false)
+        ->assertSee('id="pr-reset"', false)
+        ->assertSee('window.history.replaceState(null, \'\', window.location.pathname)', false)
+        ->assertSee('window.location.assign(form.action)', false)
+        ->assertDontSee('Refresh Records')
         ->assertSee('Admin')
         ->assertSee('Average price per category over time')
         ->assertSee('"product":"Dog Food"', false)

@@ -26,6 +26,8 @@ test('login page links to password recovery and recovery page accepts an email',
         ->assertOk()
         ->assertSee('class="auth-scene-page login-page', false)
         ->assertSee('password-visibility-toggle:hover', false)
+        ->assertSee('tg.innerHTML = EYE_OFF;', false)
+        ->assertSee('tg.innerHTML = show ? EYE : EYE_OFF;', false)
         ->assertSee(route('password.request'), false);
 
     $this->get(route('password.request'))
@@ -84,7 +86,11 @@ test('users can reset their password with a valid token', function () {
         ->assertOk()
         ->assertSee('aria-label="Show password"', false)
         ->assertSee('aria-label="Show password confirmation"', false)
-        ->assertSee('data-toggle-password', false);
+        ->assertSee('data-toggle-password', false)
+        ->assertSee('aria-hidden="true" class="hidden"><path d="M2 12s3.6-7', false)
+        ->assertSee('data-eye-off viewBox="0 0 24 24"', false)
+        ->assertSee("button.querySelector('[data-eye]').classList.toggle('hidden', !showing);", false)
+        ->assertSee("button.querySelector('[data-eye-off]').classList.toggle('hidden', showing);", false);
 
     $this->post(route('password.update'), [
         'token' => $token,

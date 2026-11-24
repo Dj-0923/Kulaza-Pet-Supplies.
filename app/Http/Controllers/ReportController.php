@@ -15,8 +15,7 @@ class ReportController extends Controller
 
     public function priceRecords()
     {
-        $records = PriceRecord::whereColumn('old_price', '!=', 'new_price')
-            ->orderByDesc('changed_at')->orderByDesc('id')->get()
+        $priceHistory = PriceRecord::orderByDesc('changed_at')->orderByDesc('id')->get()
             ->map(fn (PriceRecord $record) => [
                 'id' => $record->id,
                 'product_id' => $record->product_id,
@@ -27,8 +26,11 @@ class ReportController extends Controller
                 'new_price' => $record->new_price,
                 'changed_by' => $record->changed_by,
             ])->all();
+        $records = array_values(array_filter($priceHistory, fn (array $record) =>
+            $record['old_price'] !== $record['new_price']
+        ));
 
-        return view('price-records', compact('records'));
+        return view('price-records', compact('records', 'priceHistory'));
     }
 
     public function destroyPriceRecord(PriceRecord $priceRecord)

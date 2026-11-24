@@ -9,6 +9,7 @@
  * The route builds these rows from the price_records table.
  */
 $records = $records ?? [];
+$priceHistory = $priceHistory ?? $records;
 $pageTitle = 'Price Records';
 
 $today    = date('Y-m-d');
@@ -27,8 +28,8 @@ $productKey = fn($r) => $r['product_id'] !== null
 // ---- Filter options span January through the current month, or older history if available ----
 $currentMonth = new DateTimeImmutable(date('Y-m-01'));
 $allTimeStart = new DateTimeImmutable(date('Y-01-01'));
-if ($records) {
-    $firstRecordMonth = new DateTimeImmutable(date('Y-m-01', strtotime(min(array_column($records, 'date')))));
+if ($priceHistory) {
+    $firstRecordMonth = new DateTimeImmutable(date('Y-m-01', strtotime(min(array_column($priceHistory, 'date')))));
     if ($firstRecordMonth < $allTimeStart) {
         $allTimeStart = $firstRecordMonth;
     }
@@ -41,11 +42,11 @@ if (!array_key_exists($month, $months)) {
     $month = date('Y-m');
 }
 $selectedMonthLabel = $months[$month];
-$categories = array_values(array_unique(array_column($records, 'category')));
+$categories = array_values(array_unique(array_column($priceHistory, 'category')));
 sort($categories);
 $productOptions = [];
 $productCategories = [];
-foreach ($records as $r) {
+foreach ($priceHistory as $r) {
     $key = $productKey($r);
     if (!array_key_exists($key, $productOptions)) {
         $productOptions[$key] = $r['product'];
@@ -61,6 +62,9 @@ $selectedProductName = $productOptions[$prod] ?? '';
 
 // ---- Category + product filter (used by chart and table) ----
 $base = array_values(array_filter($records, fn($r) =>
+    ($cat === '' || $r['category'] === $cat) && ($prod === '' || $productKey($r) === $prod)
+));
+$chartBase = array_values(array_filter($priceHistory, fn($r) =>
     ($cat === '' || $r['category'] === $cat) && ($prod === '' || $productKey($r) === $prod)
 ));
 
@@ -86,7 +90,7 @@ if ($month === 'all') {
     if ($end < $start) $end = $start;
 }
 $byProd = [];
-foreach ($base as $r) $byProd[$productKey($r)][] = $r;
+foreach ($chartBase as $r) $byProd[$productKey($r)][] = $r;
 $prodSeries = [];
 foreach ($byProd as $key => $list) {
     usort($list, fn($a, $b) => strcmp($a['date'], $b['date']) ?: ($a['id'] <=> $b['id']));
@@ -120,10 +124,12 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
 <?php else: ?>
 <?php if (session('status')): ?><div class="card text-green-400 mb-4" role="status"><?= e(session('status')) ?></div><?php endif; ?>
 <style>
-.pr-filters{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:12px}
+.pr-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto auto;gap:12px}
 .pr-filters select{height:44px;padding:0 14px;border-radius:10px;border:1px solid #1e251e;background:#0c100c;color:inherit;min-width:0}
 .pr-go{height:44px;padding:0 28px;border-radius:10px;border:0;background:#2f8f3a;color:#fff;font-weight:600;cursor:pointer}
 .pr-go:hover{background:#3fb14c}
+.pr-reset{height:44px;padding:0 20px;border-radius:10px;border:1px solid #1e251e;background:#0c100c;color:inherit;font-weight:600;cursor:pointer}
+.pr-reset:hover{background:#1a2a1a}
 .pr-mute{color:#8d988d;font-size:12px}
 .pr-up{color:#e5675a}.pr-down{color:#3fb14c}
 .pr-empty{padding:28px;text-align:center;color:#8d988d}
@@ -142,11 +148,11 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
 .pr-period-option{display:block;width:100%;padding:8px 10px;border:0;border-radius:6px;background:transparent;color:inherit;text-align:left;cursor:pointer}
 .pr-period-option:hover,.pr-period-option[aria-selected="true"]{background:#1a2a1a}
 .pr-pager a.off{opacity:.4;pointer-events:none}
-@media(max-width:900px){.pr-filters{grid-template-columns:1fr 1fr}.pr-go{grid-column:1/-1}}
+@media(max-width:900px){.pr-filters{grid-template-columns:1fr 1fr}}
 </style>
 
 <!-- Filters -->
-<form method="GET" class="card bg-[#0b0e0b]! mb-6">
+<form method="GET" action="<?= e(route('price-records')) ?>" class="card bg-[#0b0e0b]! mb-6">
     <div class="pr-filters">
         <input type="hidden" name="month" id="pr-period-value" value="<?= e($month) ?>">
         <div class="pr-period" id="pr-period">
@@ -177,7 +183,8 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
             <option value="old" <?= $sort === 'old' ? 'selected' : '' ?>>Oldest first</option>
             <option value="big" <?= $sort === 'big' ? 'selected' : '' ?>>Biggest change</option>
         </select>
-        <button class="pr-go" type="submit">Refresh Records</button>
+        <button class="pr-go" type="submit">Apply</button>
+        <button class="pr-reset" type="button" id="pr-reset">Reset</button>
     </div>
 </form>
 <script>
@@ -186,7 +193,14 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
         const trigger = document.getElementById('pr-period-trigger');
         const menu = document.getElementById('pr-period-menu');
         const value = document.getElementById('pr-period-value');
-        if (!picker || !trigger || !menu || !value) return;
+        const form = picker && picker.closest('form');
+        const reset = document.getElementById('pr-reset');
+        if (!picker || !trigger || !menu || !value || !form || !reset) return;
+
+        if (window.location.search) {
+            window.history.replaceState(null, '', window.location.pathname);
+        }
+        reset.addEventListener('click', () => window.location.assign(form.action));
 
         trigger.addEventListener('click', () => {
             const opening = menu.hidden;

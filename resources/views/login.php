@@ -31,7 +31,7 @@
         <label for="password" class="block text-sm text-gray-300 mb-1">Password</label>
         <div class="relative mb-10">
             <input id="password" type="password" name="password" class="login-input w-full bg-transparent border-b border-gray-500 focus:border-green-500 py-2.5 pr-10 text-base outline-none">
-            <button type="button" id="togglePw" aria-label="Show password" class="password-visibility-toggle absolute right-0 top-1/2 -translate-y-1/2 p-1"></button>
+            <button type="button" id="togglePw" aria-label="Show password" aria-pressed="false" class="password-visibility-toggle absolute right-0 top-1/2 -translate-y-1/2 p-1"></button>
         </div>
         
         <button type="submit" class="login-submit block w-3/4 mx-auto text-center bg-[#2e7d32] rounded-lg py-3 text-base font-semibold text-white">Log in</button>
@@ -43,8 +43,8 @@
         const EYE = svg('<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>');
         const EYE_OFF = svg('<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>');
         const pw = document.getElementById('password'), tg = document.getElementById('togglePw');
-        tg.innerHTML = EYE;
-        tg.onclick = () => { const show = pw.type === 'password'; pw.type = show ? 'text' : 'password'; tg.innerHTML = show ? EYE_OFF : EYE; tg.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); };
+        tg.innerHTML = EYE_OFF;
+        tg.onclick = () => { const show = pw.type === 'password'; pw.type = show ? 'text' : 'password'; tg.innerHTML = show ? EYE : EYE_OFF; tg.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); tg.setAttribute('aria-pressed', String(show)); };
     </script>
 </body>
 </html>

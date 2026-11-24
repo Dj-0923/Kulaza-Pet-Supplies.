@@ -31,8 +31,8 @@
                 <div class="relative">
                     <input id="password" type="password" name="password" autocomplete="new-password" minlength="8" class="w-full border-b border-gray-500 bg-transparent py-2.5 pr-12 text-base outline-none focus:border-green-500" required autofocus>
                     <button type="button" class="password-visibility-toggle absolute right-0 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 rounded" data-toggle-password aria-label="Show password" aria-pressed="false">
-                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
+                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
                     </button>
                 </div>
             </div>
@@ -41,8 +41,8 @@
                 <div class="relative">
                     <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" minlength="8" class="w-full border-b border-gray-500 bg-transparent py-2.5 pr-12 text-base outline-none focus:border-green-500" required>
                     <button type="button" class="password-visibility-toggle absolute right-0 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 rounded" data-toggle-password aria-label="Show password confirmation" aria-pressed="false">
-                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
+                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
                     </button>
                 </div>
             </div>
@@ -55,8 +55,8 @@
             const input = button.parentElement.querySelector('input');
             const showing = input.type === 'password';
             input.type = showing ? 'text' : 'password';
-            button.querySelector('[data-eye]').classList.toggle('hidden', showing);
-            button.querySelector('[data-eye-off]').classList.toggle('hidden', !showing);
+            button.querySelector('[data-eye]').classList.toggle('hidden', !showing);
+            button.querySelector('[data-eye-off]').classList.toggle('hidden', showing);
             button.setAttribute('aria-pressed', String(showing));
             button.setAttribute('aria-label', `${showing ? 'Hide' : 'Show'} ${input.name === 'password_confirmation' ? 'password confirmation' : 'password'}`);
         });

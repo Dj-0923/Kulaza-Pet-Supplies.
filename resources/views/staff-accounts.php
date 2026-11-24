@@ -217,8 +217,8 @@ include resource_path('views/layouts/header.php');
             const input = document.getElementById(button.dataset.togglePassword);
             const visible = input.type === 'text';
             input.type = visible ? 'password' : 'text';
-            button.querySelector('[data-eye]').classList.toggle('hidden', !visible);
-            button.querySelector('[data-eye-off]').classList.toggle('hidden', visible);
+            button.querySelector('[data-eye]').classList.toggle('hidden', visible);
+            button.querySelector('[data-eye-off]').classList.toggle('hidden', !visible);
             button.setAttribute('aria-pressed', String(!visible));
             button.setAttribute('aria-label', visible
                 ? button.getAttribute('aria-label').replace('Hide', 'Show')

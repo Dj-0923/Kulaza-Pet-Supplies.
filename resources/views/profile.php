@@ -100,8 +100,8 @@ include resource_path('views/layouts/header.php');
                 <div class="relative">
                     <input id="current_password" type="password" name="current_password" class="inp pr-12" autocomplete="current-password" required>
                     <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-white" data-toggle-password="#current_password" aria-label="Show current password" aria-pressed="false">
-                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
+                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
                     </button>
                 </div>
                 <?php if ($errors->has('current_password')): ?><p class="mt-1 text-sm text-red-300"><?= e($errors->first('current_password')) ?></p><?php endif; ?>
@@ -111,8 +111,8 @@ include resource_path('views/layouts/header.php');
                 <div class="relative">
                     <input id="password" type="password" name="password" class="inp pr-12" autocomplete="new-password" minlength="8" required>
                     <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-white" data-toggle-password="#password" aria-label="Show new password" aria-pressed="false">
-                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
+                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
                     </button>
                 </div>
                 <?php if ($errors->has('password')): ?><p class="mt-1 text-sm text-red-300"><?= e($errors->first('password')) ?></p><?php endif; ?>
@@ -122,8 +122,8 @@ include resource_path('views/layouts/header.php');
                 <div class="relative">
                     <input id="password_confirmation" type="password" name="password_confirmation" class="inp pr-12" autocomplete="new-password" minlength="8" required>
                     <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-white" data-toggle-password="#password_confirmation" aria-label="Show password confirmation" aria-pressed="false">
-                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
+                        <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
                     </button>
                 </div>
                 <?php if ($errors->has('password_confirmation')): ?><p class="mt-1 text-sm text-red-300"><?= e($errors->first('password_confirmation')) ?></p><?php endif; ?>
@@ -140,8 +140,8 @@ $extraScript = <<<'HTML'
             const input = document.querySelector(button.dataset.togglePassword);
             const showing = input.type === 'password';
             input.type = showing ? 'text' : 'password';
-            button.querySelector('[data-eye]').classList.toggle('hidden', showing);
-            button.querySelector('[data-eye-off]').classList.toggle('hidden', !showing);
+            button.querySelector('[data-eye]').classList.toggle('hidden', !showing);
+            button.querySelector('[data-eye-off]').classList.toggle('hidden', showing);
             button.setAttribute('aria-label', `${showing ? 'Hide' : 'Show'} ${button.getAttribute('aria-label').replace(/^(Show|Hide) /, '')}`);
             button.setAttribute('aria-pressed', String(showing));
         });

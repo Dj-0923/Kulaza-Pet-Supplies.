@@ -29,6 +29,10 @@ test('authenticated users can view their profile and change password', function 
         ->assertSee('Google App Password')
         ->assertSee('Gmail sending setup')
         ->assertSee('data-toggle-password', false)
+        ->assertSee('aria-hidden="true" class="hidden"><path d="M2 12s3.6-7', false)
+        ->assertSee('data-eye-off viewBox="0 0 24 24"', false)
+        ->assertSee("button.querySelector('[data-eye]').classList.toggle('hidden', !showing);", false)
+        ->assertSee("button.querySelector('[data-eye-off]').classList.toggle('hidden', showing);", false)
         ->assertSee('Change password')
         ->assertSee('name="current_password"', false)
         ->assertSee('name="password_confirmation"', false);

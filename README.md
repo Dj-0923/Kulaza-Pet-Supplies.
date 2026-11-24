@@ -21,6 +21,27 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Deploy to Render
+
+This project includes a Docker setup for a Render Web Service and uses PostgreSQL in production.
+
+1. Create a PostgreSQL database on Render and copy its **Internal Database URL**.
+2. Create a **Web Service** from this repository, select **Docker**, and use the root `Dockerfile`.
+3. Configure these environment variables on the web service:
+
+   - `APP_ENV=production`
+   - `APP_DEBUG=false`
+   - `APP_KEY` from `php artisan key:generate --show`
+   - `APP_URL` set to the deployed Render URL
+   - `DB_CONNECTION=pgsql`
+   - `DB_URL` set to the PostgreSQL **Internal Database URL**
+
+   Keep `APP_KEY` and the database URL secret; do not commit them to the repository.
+4. Set the service's **Pre-Deploy Command** to `php artisan migrate --force`.
+5. After the first deployment, create the initial administrator with `php artisan app:create-admin` from the service shell.
+
+The container serves Laravel's `public` directory on Render's `PORT`. Product uploads are stored under `public/uploads`; configure persistent or external file storage before relying on uploaded files in production.
+
 ## Local account setup
 
 After installing dependencies, configuring `.env`, and running database migrations, create the first administrator account locally:
