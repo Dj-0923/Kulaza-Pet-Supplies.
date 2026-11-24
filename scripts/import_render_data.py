@@ -2,9 +2,11 @@
 """Import local SQLite business data into an empty Render PostgreSQL database."""
 
 import getpass
+import re
 import sqlite3
 import sys
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 
 TABLES = (
@@ -135,9 +137,19 @@ def main() -> int:
                                 f"Verification failed for {table}: expected {expected}, got {actual}"
                             )
         except psycopg.Error as error:
+            detail = str(error).replace(database_url, "<redacted database URL>")
+            parsed_url = urlsplit(database_url)
+            if parsed_url.password:
+                detail = detail.replace(unquote(parsed_url.password), "<redacted>")
+            detail = re.sub(
+                r"(?i)(postgres(?:ql)?://)[^/@\s]+@",
+                r"\1<redacted>@",
+                detail,
+            )
             print(
-                f"PostgreSQL import failed ({error.sqlstate or type(error).__name__}). "
-                "The database transaction was rolled back; local data was not changed."
+                f"PostgreSQL connection/import failed "
+                f"({error.sqlstate or type(error).__name__}): {detail}\n"
+                "No local data was changed."
             )
             return 1
         except RuntimeError as error:
