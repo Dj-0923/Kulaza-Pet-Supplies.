@@ -43,6 +43,17 @@ This project includes a Docker setup for a Render Web Service and uses PostgreSQ
 
 The container serves Laravel's `public` directory on Render's `PORT`. Product uploads are stored under `public/uploads`; configure persistent or external file storage before relying on uploaded files in production.
 
+### Import existing local data
+
+To copy the local SQLite catalog and sales records into an empty Render PostgreSQL database, install the one-time helper dependency and run:
+
+```sh
+python -m pip install -r scripts/requirements-render-import.txt
+python scripts/import_render_data.py
+```
+
+The script asks for the Render **External Database URL** with hidden input. Do not share or commit that URL. It imports categories, brands, products, price history, transactions, and transaction items only; it refuses to import if those Render tables already contain data. It does not import users, Gmail settings, sessions, or temporary tokens. Product images are included in `public/uploads/products`; future uploads still need persistent or external storage.
+
 ## Local account setup
 
 After installing dependencies, configuring `.env`, and running database migrations, create the first administrator account locally:
