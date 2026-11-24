@@ -4,8 +4,10 @@ use App\Models\User;
 use App\Models\MailSettings;
 use App\Mail\StaffAccountSetupMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 
 uses(RefreshDatabase::class);
@@ -321,6 +323,11 @@ test('staff account deletion rejects non-staff users', function () {
 });
 
 test('admin can reset a staff password', function () {
+    Notification::fake();
+    MailSettings::create([
+        'smtp_username' => 'sender@gmail.com',
+        'smtp_password' => 'abcdefghijklmnop',
+    ]);
     $staffAccount = User::create([
         'name' => 'Alex Staff',
         'email' => 'alex_staff@kulaza.local',
@@ -333,16 +340,16 @@ test('admin can reset a staff password', function () {
         ->assertOk()
         ->assertSee('Reset Password');
 
-    $this->patch(route('staff.password', $staffAccount), [
-        'password' => 'new-password-456',
-        'password_confirmation' => 'new-password-456',
-    ])->assertRedirect(route('staff'))
-        ->assertSessionHas('status', 'Staff password reset successfully.');
+    $this->patch(route('staff.password', $staffAccount))
+        ->assertRedirect(route('staff'))
+        ->assertSessionHas('status', 'A password reset link was sent to alex_staff@kulaza.local.');
 
-    expect(Hash::check('new-password-456', $staffAccount->fresh()->password))->toBeTrue();
+    Notification::assertSentTo($staffAccount, ResetPassword::class);
+    expect(Hash::check('old-password-123', $staffAccount->fresh()->password))->toBeTrue();
 });
 
-test('staff password reset rejects invalid password and non-staff account', function () {
+test('staff password reset requires gmail settings and rejects non-staff account', function () {
+    Notification::fake();
     $staffAccount = User::create([
         'name' => 'Alex Staff',
         'email' => 'alex_staff@kulaza.local',
@@ -351,13 +358,11 @@ test('staff password reset rejects invalid password and non-staff account', func
         'password' => 'old-password-123',
     ]);
 
-    $this->from(route('staff'))->patch(route('staff.password', $staffAccount), [
-        'password' => 'short',
-        'password_confirmation' => 'different',
-    ])->assertRedirect(route('staff'))
-        ->assertSessionHasErrors(['password']);
+    $this->from(route('staff'))->patch(route('staff.password', $staffAccount))
+        ->assertRedirect(route('staff'))
+        ->assertSessionHasErrors(['email']);
 
-    expect(Hash::check('old-password-123', $staffAccount->fresh()->password))->toBeTrue();
+    Notification::assertNothingSent();
 
     $admin = User::create([
         'name' => 'Admin User',
@@ -367,10 +372,7 @@ test('staff password reset rejects invalid password and non-staff account', func
         'password' => 'admin-password-123',
     ]);
 
-    $this->patch(route('staff.password', $admin), [
-        'password' => 'new-password-456',
-        'password_confirmation' => 'new-password-456',
-    ])->assertNotFound();
+    $this->patch(route('staff.password', $admin))->assertNotFound();
 
     expect(Hash::check('admin-password-123', $admin->fresh()->password))->toBeTrue();
 });

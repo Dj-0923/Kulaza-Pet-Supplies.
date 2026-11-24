@@ -115,21 +115,38 @@ class StaffAccountController extends Controller
             abort(404);
         }
 
-        $validated = $request->validate([
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-
-        $user->update(['password' => $validated['password']]);
-        if ($user->must_set_password) {
-            $user->update([
-                'must_set_password' => false,
-                'is_active' => true,
-                'email_verified_at' => now(),
+        $settings = MailSettings::current();
+        if (! $settings) {
+            return back()->withErrors([
+                'email' => 'Configure Gmail sending in Profile before sending password reset emails.',
             ]);
-            Password::deleteToken($user);
         }
 
-        return redirect()->route('staff')->with('status', 'Staff password reset successfully.');
+        $settings->configureMailer();
+
+        try {
+            $status = Password::sendResetLink(['email' => $user->email]);
+        } catch (TransportExceptionInterface $exception) {
+            Log::error('Staff password reset email could not be delivered.', [
+                'user_id' => $user->getKey(),
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return back()->withErrors([
+                'email' => 'The password reset email could not be sent. Check the Gmail sending settings and try again.',
+            ]);
+        }
+
+        if ($status !== Password::RESET_LINK_SENT) {
+            return back()->withErrors([
+                'email' => 'A password reset email could not be sent to this staff account.',
+            ]);
+        }
+
+        return redirect()->route('staff')->with(
+            'status',
+            'A password reset link was sent to '.$user->email.'.'
+        );
     }
 
     public function resendSetupEmail(User $user)

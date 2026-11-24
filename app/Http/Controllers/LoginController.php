@@ -16,13 +16,23 @@ class LoginController extends Controller
     public function store(Request $request)
     {
         $credentials = $request->validate([
-            'username' => ['required', 'string', 'max:50'],
+            'username' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials)) {
+        $identifier = trim((string) $credentials['username']);
+        $loginField = str_contains($identifier, '@') ? 'email' : 'username';
+        if ($loginField === 'email') {
+            $identifier = strtolower($identifier);
+        }
+        $attemptCredentials = [
+            $loginField => $identifier,
+            'password' => $credentials['password'],
+        ];
+
+        if (! Auth::attempt($attemptCredentials)) {
             throw ValidationException::withMessages([
-                'username' => 'The username or password is incorrect.',
+                'username' => 'The username, Gmail address, or password is incorrect.',
             ]);
         }
 

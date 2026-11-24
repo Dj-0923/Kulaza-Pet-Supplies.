@@ -68,19 +68,20 @@ include resource_path('views/layouts/header.php');
 
     function renderProducts() {
         const q = $('ss').value.toLowerCase();
-        const list = products.map((p, i) => ({p, i})).filter(({p}) => (scat === 'All' || p.category === scat) && p.name.toLowerCase().includes(q));
+        const list = products.map((p, i) => ({p, i})).filter(({p}) => (scat === 'All' || p.category === scat) && `${p.name} ${p.brand || ''}`.toLowerCase().includes(q));
         $('sgrid').innerHTML = list.map(({p, i}) => {
             const stock = availableStock(i);
             const outOfStock = stock < (p.unit === 'kg' ? 0.01 : 1);
             return `<button type="button" ${outOfStock ? 'disabled' : ''} onclick="addToCart(${i})" class="text-left rounded-xl p-3 border border-[#1f271f] bg-[#0b0e0b] hover:border-green-600 ${outOfStock ? 'opacity-40' : ''}">
-            <p class="font-semibold">${p.name}</p>${p.weight ? `<p class="text-xs text-gray-400">${p.weight} kg/package</p>` : ''}<p class="text-xs text-gray-400">${p.category}</p>
-            <p class="mt-2 text-green-400 font-semibold">${peso(p.price)} /${p.unit}</p><p class="text-xs text-gray-500">${outOfStock ? 'Out of stock' : formatQuantity(stock) + ' ' + p.unit + ' in stock'}</p></button>`;
+            ${p.image_url ? `<img src="${p.image_url}" alt="" class="mb-3 h-28 w-full rounded-lg object-cover">` : `<div class="mb-3 flex h-28 items-center justify-center rounded-lg border border-[#1f271f] text-xs text-gray-500">No image</div>`}
+            <p class="font-semibold">${p.name}</p><p class="text-xs text-gray-400">${p.brand || 'No brand'} · ${p.category}</p>
+            <p class="mt-2 text-green-400 font-semibold">${peso(p.price)} /${p.unit}</p><p class="text-xs text-gray-500">${outOfStock ? 'Out of stock' : formatQuantity(stock) + ' ' + (p.unit === 'sack' ? 'sacks' : p.unit) + ' in stock'}</p></button>`;
         }).join('')
             || `<p class="col-span-full text-center text-gray-400 py-12">${products.length ? 'No products match. Try another category or search.' : 'No products have been added yet.'}</p>`;
     }
     function renderCart() {
         $('rows').innerHTML = cart.map((r, i) => { const p = products[r.p]; return `<div class="py-2 border-t border-[#1f271f]">
-            <div class="flex justify-between text-sm"><span class="font-semibold">${p.name}${p.weight ? ` <span class="text-xs text-gray-400">(${p.weight} kg/package)</span>` : ''}</span><span id="lt${i}">${peso(p.price * r.q)}</span></div>
+            <div class="flex justify-between text-sm"><span class="font-semibold">${p.name}</span><span id="lt${i}">${peso(p.price * r.q)}</span></div>
             <div class="flex items-center gap-2 mt-1 text-xs text-gray-400"><span>${peso(p.price)} /${p.unit}</span><span class="flex-1"></span>
             <button type="button" class="btn-dark !px-2 !py-0" onclick="chg(${i},-1)" aria-label="Decrease">-</button>
             <input type="number" inputmode="${p.unit === 'kg' ? 'decimal' : 'numeric'}" min="${p.unit === 'kg' ? '0.01' : '1'}" max="${p.stock}" step="${p.unit === 'kg' ? '0.01' : '1'}" value="${formatQuantity(r.q)}" aria-label="Quantity in ${p.unit}" class="inp !w-20 !py-1 text-center" onfocus="this.select()" oninput="typeQty(${i},this)" onchange="renderCart();renderProducts()">
@@ -94,8 +95,8 @@ include resource_path('views/layouts/header.php');
     function typeQty(i, el) {
         const r = cart[i], p = products[r.p], input = Number(el.value);
         if (!Number.isFinite(input) || input <= 0) return;
-        if (p.unit === 'pcs' && !Number.isInteger(input)) {
-            toast('Quantity for ' + p.name + ' must be a whole number of pieces.');
+        if (p.unit !== 'kg' && !Number.isInteger(input)) {
+            toast('Quantity for ' + p.name + ' must be a whole number of ' + p.unit + '.');
             el.value = r.q;
             return;
         }

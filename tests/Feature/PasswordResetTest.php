@@ -24,11 +24,13 @@ beforeEach(function () {
 test('login page links to password recovery and recovery page accepts an email', function () {
     $this->get(route('login'))
         ->assertOk()
+        ->assertSee('class="auth-scene-page login-page', false)
         ->assertSee('password-visibility-toggle:hover', false)
         ->assertSee(route('password.request'), false);
 
     $this->get(route('password.request'))
         ->assertOk()
+        ->assertSee('class="auth-scene-page forgot-password-page', false)
         ->assertSee('name="email"', false)
         ->assertSee('Gmail address')
         ->assertSee('Send reset link');

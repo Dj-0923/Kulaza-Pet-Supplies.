@@ -14,15 +14,16 @@ class SalesController extends Controller
 {
     public function create()
     {
-        $products = Product::with('category')->orderBy('name')->get()
+        $products = Product::with(['category', 'brand'])->orderBy('name')->get()
             ->map(fn (Product $product) => [
                 'id' => $product->id,
                 'name' => $product->name,
                 'category' => $product->category->name,
+                'brand' => $product->brand?->name,
                 'price' => $product->price,
                 'stock' => $product->stock,
-                'weight' => $product->weight,
                 'unit' => $product->unit,
+                'image_url' => $product->image_path ? asset($product->image_path) : null,
             ])->all();
 
         return view('record-sale', compact('products'));
@@ -54,9 +55,9 @@ class SalesController extends Controller
                 }
 
                 $quantity = (float) $item['quantity'];
-                if ($product->unit === 'pcs' && floor($quantity) !== $quantity) {
+                if ($product->unit !== 'kg' && floor($quantity) !== $quantity) {
                     throw ValidationException::withMessages([
-                        "items.{$index}.quantity" => "Quantity for {$product->name} must be a whole number of pieces.",
+                        "items.{$index}.quantity" => "Quantity for {$product->name} must be a whole number of {$product->unit}.",
                     ]);
                 }
 

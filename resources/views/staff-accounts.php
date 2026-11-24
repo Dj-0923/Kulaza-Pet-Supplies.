@@ -72,7 +72,11 @@ include resource_path('views/layouts/header.php');
                                 <input type="hidden" name="is_active" value="<?= $staffAccount->is_active ? '0' : '1' ?>">
                                 <button type="submit" class="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-[#1f271f]" data-staff-status-button><?= $staffAccount->is_active ? 'Mark Inactive' : 'Mark Active' ?></button>
                             </form>
-                            <button type="button" class="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-[#1f271f]" data-reset-password="<?= e($staffAccount->id) ?>">Reset Password</button>
+                            <form method="POST" action="<?= e(route('staff.password', $staffAccount)) ?>">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="_method" value="PATCH">
+                                <button type="submit" class="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-[#1f271f]">Reset Password</button>
+                            </form>
                             <form method="POST" action="<?= e(route('staff.destroy', $staffAccount)) ?>" id="delete-staff-<?= e($staffAccount->id) ?>" data-delete-form class="<?= $staffAccount->is_active ? 'hidden' : '' ?>">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="_method" value="DELETE">
@@ -82,25 +86,6 @@ include resource_path('views/layouts/header.php');
                             </form>
                         </div>
                     </div>
-                    <form method="POST" action="<?= e(route('staff.password', $staffAccount)) ?>" id="reset-password-<?= e($staffAccount->id) ?>" class="hidden space-y-2 mt-2">
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="_method" value="PATCH">
-                        <div class="relative">
-                            <input id="reset-password-<?= e($staffAccount->id) ?>-new" type="password" name="password" class="inp pr-14" placeholder="New password" minlength="8" autocomplete="new-password" required>
-                            <button type="button" data-toggle-password="reset-password-<?= e($staffAccount->id) ?>-new" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 rounded" aria-label="Show password" aria-pressed="false">
-                                <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
-                            </button>
-                        </div>
-                        <div class="relative">
-                            <input id="reset-password-<?= e($staffAccount->id) ?>-confirmation" type="password" name="password_confirmation" class="inp pr-14" placeholder="Confirm new password" minlength="8" autocomplete="new-password" required>
-                            <button type="button" data-toggle-password="reset-password-<?= e($staffAccount->id) ?>-confirmation" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 rounded" aria-label="Show confirmation password" aria-pressed="false">
-                                <svg data-eye viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                <svg data-eye-off viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a14.8 14.8 0 0 1-4 4.7"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 2-.2 2.8-.5"/></svg>
-                            </button>
-                        </div>
-                        <button type="submit" class="btn">Save Password</button>
-                    </form>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -202,17 +187,6 @@ include resource_path('views/layouts/header.php');
     window.setInterval(refreshStaffStatuses, 5000);
     document.addEventListener('visibilitychange', refreshStaffStatuses);
 
-    document.querySelectorAll('[data-reset-password]').forEach(button => {
-        button.addEventListener('click', () => {
-            const form = document.getElementById(`reset-password-${button.dataset.resetPassword}`);
-            form.classList.toggle('hidden');
-            button.setAttribute('aria-expanded', String(!form.classList.contains('hidden')));
-            const menuContainer = button.closest('[data-action-menu-container]');
-            const menu = menuContainer.querySelector('[data-action-menu]');
-            menu.classList.add('hidden');
-            menuContainer.querySelector('[data-action-menu-toggle]').setAttribute('aria-expanded', 'false');
-        });
-    });
     function closeActionMenus() {
         document.querySelectorAll('[data-action-menu]').forEach(menu => menu.classList.add('hidden'));
         document.querySelectorAll('[data-action-menu-toggle]').forEach(button => button.setAttribute('aria-expanded', 'false'));

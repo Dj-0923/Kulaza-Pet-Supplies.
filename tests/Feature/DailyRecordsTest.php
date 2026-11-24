@@ -295,7 +295,7 @@ test('admin can add a product that appears in product and sale pages', function 
         ->assertSee('1');
 });
 
-test('admin can add a product and category together with optional weight', function () {
+test('admin can add a product and category without saving package weight', function () {
     $this->post(route('products.store'), [
         'name' => 'Rabbit Hay',
         'category' => '__new_category__',
@@ -307,12 +307,12 @@ test('admin can add a product and category together with optional weight', funct
 
     $product = Product::with('category')->where('name', 'Rabbit Hay')->firstOrFail();
     expect($product->category->name)->toBe('Small Pets')
-        ->and($product->weight)->toBe(2.5);
+        ->and($product->weight)->toBeNull();
 
     $this->get(route('products'))
         ->assertOk()
         ->assertSee('Small Pets')
-        ->assertSee('2.5 kg');
+        ->assertDontSee('2.5 kg/package');
 });
 
 test('adding a product saves its initial price but does not show it as a price change', function () {

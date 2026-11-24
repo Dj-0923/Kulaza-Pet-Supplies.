@@ -17,12 +17,18 @@ include resource_path('views/layouts/header.php');
         $stock = $product['unit'] === 'kg'
             ? rtrim(rtrim(number_format((float) $product['stock'], 2, '.', ''), '0'), '.')
             : number_format((int) $product['stock']);
+        $stockUnit = $product['unit'] === 'sack' ? 'sacks' : $product['unit'];
     ?>
-        <article class="card !p-3" data-catalog-product data-category="<?= e($product['category']) ?>" data-search="<?= e(mb_strtolower($product['name'].' '.$product['category'])) ?>">
+        <article class="card !p-3" data-catalog-product data-category="<?= e($product['category']) ?>" data-search="<?= e(mb_strtolower($product['name'].' '.($product['brand'] ?? '').' '.$product['category'])) ?>">
+            <?php if ($product['image_url']): ?>
+                <img src="<?= e($product['image_url']) ?>" alt="" class="mb-3 aspect-square w-full rounded-lg object-cover">
+            <?php else: ?>
+                <div class="mb-3 flex aspect-square w-full items-center justify-center rounded-lg border border-[#293329] bg-[#0b0e0b] text-sm text-gray-500">No image</div>
+            <?php endif; ?>
             <h2 class="truncate font-semibold"><?= e($product['name']) ?></h2>
-            <p class="truncate text-xs text-gray-400"><?= e($product['category']) ?></p>
+            <p class="truncate text-xs text-gray-400"><?= e($product['brand'] ?? 'No brand') ?> · <?= e($product['category']) ?></p>
             <p class="mt-3 font-semibold text-green-300">₱<?= e(number_format((float) $product['price'], 2)) ?> /<?= e($product['unit']) ?></p>
-            <p class="mt-1 text-xs text-gray-400"><?= e($stock) ?> <?= e($product['unit']) ?> in stock</p>
+            <p class="mt-1 text-xs text-gray-400"><?= e($stock) ?> <?= e($stockUnit) ?> in stock</p>
         </article>
     <?php endforeach; ?>
 </div>

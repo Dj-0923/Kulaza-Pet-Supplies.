@@ -45,6 +45,23 @@ test('active staff can log in and only open staff pages', function () {
     $this->post(route('products.store'), [])->assertForbidden();
 });
 
+test('active staff can log in using their gmail address', function () {
+    $staff = User::create([
+        'name' => 'Gmail Staff',
+        'email' => 'gmail.staff@gmail.com',
+        'username' => 'gmail_staff',
+        'role' => 'staff',
+        'password' => 'secure-pass-123',
+    ]);
+
+    $this->post(route('login.store'), [
+        'username' => 'GMAIL.STAFF@GMAIL.COM',
+        'password' => 'secure-pass-123',
+    ])->assertRedirect(route('dashboard'));
+
+    $this->assertAuthenticatedAs($staff);
+});
+
 test('inactive staff cannot log in and active sessions end when deactivated', function () {
     $staff = User::create([
         'name' => 'Alex Staff',

@@ -16,7 +16,7 @@
         .password-visibility-toggle:hover,.password-visibility-toggle:active{transform:translateY(-50%)!important;box-shadow:none;filter:none}
     </style>
 </head>
-<body class="text-white min-h-screen flex items-center justify-center p-4" style="background:radial-gradient(circle at 20% 15%,#14210f 0,#0a0d0a 45%,#050605 100%)">
+<body class="auth-scene-page login-page text-white min-h-screen flex items-center justify-center p-4" style="background:radial-gradient(circle at 20% 15%,#14210f 0,#0a0d0a 45%,#050605 100%)">
     <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false" aria-label="Switch to light mode" title="Toggle color theme">
         <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6.5 6.5 0 0 0 8.268 8.268c.344-.215.825-.003.803.401"/></svg>
         <svg data-theme-icon="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
@@ -26,7 +26,7 @@
         <img src="<?= e(asset('images/logo-icon.png')) ?>" alt="Kulaza Pet Supplies" class="login-logo">
         <?php if (session('status')): ?><div class="mb-5 rounded-lg border border-green-800 bg-green-950/40 px-4 py-3 text-sm text-green-300" role="status"><?= e(session('status')) ?></div><?php endif; ?>
         <?php if ($errors->any()): ?><div class="mb-5 rounded-lg border border-red-800 bg-red-950/40 px-4 py-3 text-sm text-red-300" role="alert"><?php foreach ($errors->all() as $error): ?><p><?= e($error) ?></p><?php endforeach; ?></div><?php endif; ?>
-        <label for="username" class="block text-sm text-gray-300 mb-1">Username</label>
+        <label for="username" class="block text-sm text-gray-300 mb-1">Username/Email</label>
         <input id="username" type="text" name="username" value="<?= e(old('username')) ?>" autocomplete="username" class="login-input w-full bg-transparent border-b border-gray-500 focus:border-green-500 mb-8 py-2.5 text-base outline-none" required autofocus>
         <label for="password" class="block text-sm text-gray-300 mb-1">Password</label>
         <div class="relative mb-10">
@@ -34,7 +34,7 @@
             <button type="button" id="togglePw" aria-label="Show password" class="password-visibility-toggle absolute right-0 top-1/2 -translate-y-1/2 p-1"></button>
         </div>
         
-        <button type="submit" class="block w-3/4 mx-auto text-center bg-[#2e7d32] rounded-lg py-3 text-base font-semibold">Log in</button>
+        <button type="submit" class="login-submit block w-3/4 mx-auto text-center bg-[#2e7d32] rounded-lg py-3 text-base font-semibold text-white">Log in</button>
         <a href="<?= e(route('password.request')) ?>" class="mt-4 block text-center text-sm text-gray-400 hover:text-white">Forgot password?</a>
     </form>
 <script>

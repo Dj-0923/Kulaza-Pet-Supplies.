@@ -367,3 +367,383 @@ html.light-mode .theme-toggle svg.is-active {
     background: #e8b931;
     color: #fff;
 }
+
+body.auth-scene-page {
+    position: relative;
+    isolation: isolate;
+    overflow-x: hidden;
+}
+
+body.auth-scene-page > form,
+body.auth-scene-page > main {
+    position: relative;
+    z-index: 2;
+}
+
+body.login-page .login-submit {
+    background: #2e7d32 !important;
+    color: #fff !important;
+    font-weight: 700;
+}
+
+html.light-mode body.login-page .login-submit {
+    background: #215d27 !important;
+    border: 2px solid #215d27;
+    color: #fff !important;
+}
+
+html.light-mode body.login-page .login-submit:hover,
+html.light-mode body.login-page .login-submit:focus-visible {
+    background: #17491d !important;
+    border-color: #17491d;
+    color: #fff !important;
+}
+
+html.light-mode body.auth-scene-page [role="alert"] {
+    background: #fff1ef !important;
+    border-color: #b42318 !important;
+    color: #8f1d14 !important;
+}
+
+html.light-mode body.auth-scene-page [role="status"] {
+    background: #edf6e9 !important;
+    border-color: #347a3d !important;
+    color: #24572b !important;
+}
+
+body.auth-scene-page > .day-landscape,
+body.auth-scene-page > .night-landscape {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 400ms ease, visibility 400ms ease;
+}
+
+html.light-mode body.auth-scene-page > .day-landscape,
+html:not(.light-mode) body.auth-scene-page > .night-landscape {
+    visibility: visible;
+    opacity: 1;
+}
+
+.day-sun {
+    position: absolute;
+    top: 8%;
+    right: 12%;
+    width: clamp(54px, 7vw, 88px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff8c5, #ffd45e 72%);
+    box-shadow: 0 0 0 12px rgb(255 214 99 / 10%), 0 0 48px rgb(255 205 71 / 28%);
+    animation: login-sun-glow 5s ease-in-out infinite alternate;
+}
+
+.day-cloud {
+    position: absolute;
+    width: 116px;
+    height: 32px;
+    border-radius: 40px;
+    background: rgb(255 255 255 / 78%);
+    filter: drop-shadow(0 5px 8px rgb(85 119 92 / 8%));
+    animation: login-cloud-drift 42s linear infinite;
+}
+
+.day-cloud::before,
+.day-cloud::after {
+    position: absolute;
+    bottom: 8px;
+    border-radius: 50%;
+    background: inherit;
+    content: "";
+}
+
+.day-cloud::before {
+    left: 18px;
+    width: 42px;
+    height: 42px;
+}
+
+.day-cloud::after {
+    left: 51px;
+    width: 34px;
+    height: 34px;
+}
+
+.day-cloud-one {
+    top: 18%;
+    left: -150px;
+}
+
+.day-cloud-two {
+    top: 36%;
+    left: -220px;
+    transform: scale(.72);
+    animation-duration: 54s;
+    animation-delay: -18s;
+}
+
+.day-cloud-three {
+    top: 12%;
+    left: -180px;
+    transform: scale(.55);
+    animation-duration: 62s;
+    animation-delay: -34s;
+}
+
+.day-hill {
+    position: absolute;
+    bottom: -16vh;
+    width: 82vw;
+    height: 34vh;
+    min-height: 180px;
+    border-radius: 50% 50% 0 0 / 32% 32% 0 0;
+}
+
+.day-hill-back {
+    left: -20vw;
+    bottom: -20vh;
+    background: linear-gradient(160deg, rgb(195 221 181 / 35%), rgb(174 207 163 / 24%));
+}
+
+.day-hill-middle {
+    right: -24vw;
+    bottom: -23vh;
+    width: 92vw;
+    height: 40vh;
+    background: linear-gradient(200deg, rgb(160 201 151 / 26%), rgb(139 187 132 / 20%));
+}
+
+.day-hill-front {
+    left: 20vw;
+    bottom: -29vh;
+    width: 92vw;
+    height: 40vh;
+    background: linear-gradient(180deg, rgb(128 177 121 / 19%), rgb(128 177 121 / 8%));
+}
+
+.day-animal {
+    position: absolute;
+    z-index: 1;
+    bottom: 7%;
+    display: block;
+    font-size: clamp(32px, 4vw, 44px);
+    line-height: 1;
+    filter: drop-shadow(0 4px 3px rgb(49 67 49 / 14%));
+}
+
+.day-creature {
+    display: block;
+}
+
+.day-dog {
+    left: 8%;
+    animation: login-pet-walk 2.2s ease-in-out infinite alternate;
+}
+
+.day-cat {
+    left: 17%;
+    bottom: 11%;
+    animation: login-pet-walk 2.8s ease-in-out infinite alternate-reverse;
+}
+
+.day-bunny {
+    right: 15%;
+    animation: login-bunny-hop 1.6s ease-in-out infinite;
+}
+
+.day-hamster {
+    right: 7%;
+    bottom: 12%;
+    animation: login-hamster-wiggle .8s ease-in-out infinite alternate;
+}
+
+.night-sky {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 75% 15%, rgb(38 54 88 / 25%), transparent 48%);
+}
+
+.night-moon {
+    position: absolute;
+    top: 14%;
+    right: 9%;
+    color: #f2edac;
+    font-family: Georgia, serif;
+    font-size: clamp(64px, 9vw, 92px);
+    line-height: 1;
+    filter: drop-shadow(0 0 18px rgb(242 237 172 / 22%));
+    animation: login-moon-float 7s ease-in-out infinite;
+}
+
+.night-sky i {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #eef4c7;
+    box-shadow: 0 0 8px #eef4c7;
+    animation: login-star-twinkle 2.4s ease-in-out infinite alternate;
+}
+
+.night-sky i:nth-of-type(1) { left: 12%; top: 18%; }
+.night-sky i:nth-of-type(2) { left: 23%; top: 33%; animation-delay: -.7s; }
+.night-sky i:nth-of-type(3) { left: 37%; top: 14%; animation-delay: -1.4s; }
+.night-sky i:nth-of-type(4) { left: 49%; top: 29%; animation-delay: -.3s; }
+.night-sky i:nth-of-type(5) { left: 61%; top: 12%; animation-delay: -1.8s; }
+.night-sky i:nth-of-type(6) { left: 72%; top: 38%; animation-delay: -.9s; }
+.night-sky i:nth-of-type(7) { left: 84%; top: 22%; animation-delay: -2.1s; }
+.night-sky i:nth-of-type(8) { left: 94%; top: 43%; animation-delay: -.5s; }
+
+.night-pet-landscape {
+    position: absolute;
+    inset: auto 0 0;
+    height: 24vh;
+    min-height: 150px;
+    overflow: hidden;
+}
+
+.night-hill {
+    position: absolute;
+    bottom: -90px;
+    width: 75vw;
+    height: 230px;
+    border-radius: 50% 50% 0 0;
+}
+
+.night-hill-back {
+    left: -10vw;
+    background: linear-gradient(180deg, #1d2b37, #111b22);
+}
+
+.night-hill-front {
+    right: -12vw;
+    bottom: -115px;
+    width: 82vw;
+    background: linear-gradient(180deg, #263440, #152027);
+}
+
+.night-animal {
+    position: absolute;
+    bottom: 34px;
+    width: 72px;
+    height: 70px;
+    animation: login-sleep-breathe 4s ease-in-out infinite;
+}
+
+.night-cat { animation-delay: -.8s; }
+.night-bunny { animation-delay: -1.6s; }
+.night-hamster { animation-delay: -2.4s; }
+.night-dog { left: 14%; }
+.night-cat { left: 31%; bottom: 42px; }
+.night-bunny { right: 30%; bottom: 30px; }
+.night-hamster { right: 13%; bottom: 45px; }
+
+.night-pet {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: 50%;
+    display: block;
+    font-size: 42px;
+    line-height: 1;
+    transform: translateX(-50%);
+    filter: saturate(.72) brightness(.88);
+}
+
+.sleep-pillow {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    width: 56px;
+    height: 20px;
+    border: 1px solid rgb(205 218 230 / 35%);
+    border-radius: 50%;
+    background: linear-gradient(180deg, #c0ced8, #718292);
+    transform: translateX(-50%);
+}
+
+.sleep-zzz {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #d7e6f4;
+    font-size: 11px;
+    font-weight: 800;
+    animation: login-sleep-zzz 3s ease-in-out infinite;
+}
+
+.night-cat .sleep-zzz { animation-delay: -.8s; }
+.night-bunny .sleep-zzz { animation-delay: -1.6s; }
+.night-hamster .sleep-zzz { animation-delay: -2.4s; }
+
+@keyframes login-sun-glow {
+    from { transform: scale(.98); box-shadow: 0 0 0 10px rgb(255 214 99 / 9%), 0 0 36px rgb(255 205 71 / 22%); }
+    to { transform: scale(1.04); box-shadow: 0 0 0 16px rgb(255 214 99 / 12%), 0 0 56px rgb(255 205 71 / 30%); }
+}
+
+@keyframes login-cloud-drift {
+    from { translate: 0 0; }
+    to { translate: calc(100vw + 300px) 0; }
+}
+
+@keyframes login-pet-walk {
+    from { transform: translateX(0) translateY(0); }
+    to { transform: translateX(12px) translateY(-2px); }
+}
+
+@keyframes login-bunny-hop {
+    0%, 100% { transform: translateY(0); }
+    45% { transform: translateY(-19px); }
+    60% { transform: translateY(0); }
+}
+
+@keyframes login-hamster-wiggle {
+    from { transform: rotate(-5deg); }
+    to { transform: rotate(5deg); }
+}
+
+@keyframes login-moon-float {
+    0%, 100% { transform: translateY(4px) rotate(-3deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+}
+
+@keyframes login-star-twinkle {
+    from { opacity: .35; transform: scale(.7); }
+    to { opacity: 1; transform: scale(1.25); }
+}
+
+@keyframes login-sleep-breathe {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-2px) scale(1.025); }
+}
+
+@keyframes login-sleep-zzz {
+    0% { transform: translate(0, 7px) scale(.8); opacity: 0; }
+    20% { opacity: .78; }
+    75% { opacity: .62; }
+    100% { transform: translate(7px, -11px) scale(1.05); opacity: 0; }
+}
+
+@media (max-width: 640px) {
+    .day-sun { top: 7%; right: 7%; width: 48px; }
+    .day-animal { font-size: 34px; }
+    .night-animal { transform: scale(.82); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .day-sun,
+    .day-cloud,
+    .day-animal,
+    .night-moon,
+    .night-sky i,
+    .night-animal,
+    .sleep-zzz {
+        animation: none;
+    }
+
+    .day-cloud { translate: 0 0; }
+}

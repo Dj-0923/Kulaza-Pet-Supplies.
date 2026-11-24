@@ -43,6 +43,7 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/products/{product}/stock', [ProductController::class, 'addStock'])->name('products.stock');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
         Route::delete('/categories/{category}', [ProductController::class, 'destroyCategory'])->name('categories.destroy');
+        Route::delete('/brands/{brand}', [ProductController::class, 'destroyBrand'])->name('brands.destroy');
         Route::get('/sales-reports', [ReportController::class, 'sales'])->name('reports');
         Route::get('/price-records', [ReportController::class, 'priceRecords'])->name('price-records');
         Route::delete('/price-records/{priceRecord}', [ReportController::class, 'destroyPriceRecord'])->name('price-records.destroy');
