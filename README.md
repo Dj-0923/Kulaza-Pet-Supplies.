@@ -37,8 +37,8 @@ This project includes a Docker setup for a Render Web Service and uses PostgreSQ
    - `DB_URL` set to the PostgreSQL **Internal Database URL**
 
    Keep `APP_KEY` and the database URL secret; do not commit them to the repository.
-4. Set the service's **Pre-Deploy Command** to `php artisan migrate --force`.
-5. After the first deployment, create the initial administrator with `php artisan app:create-admin` from the service shell.
+4. Leave **Docker Command** and **Pre-Deploy Command** blank. The container entrypoint runs database migrations and starts Apache.
+5. To create the initial administrator without shell access, temporarily set `ADMIN_NAME`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD` as service environment variables. The entrypoint runs `php artisan app:sync-admin` on startup; remove these variables after signing in so the password is not reset on later restarts.
 
 The container serves Laravel's `public` directory on Render's `PORT`. Product uploads are stored under `public/uploads`; configure persistent or external file storage before relying on uploaded files in production.
 
