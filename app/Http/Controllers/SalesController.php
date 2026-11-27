@@ -34,7 +34,7 @@ class SalesController extends Controller
         $validated = $request->validate([
             'customer_name' => ['nullable', 'string', 'max:255'],
             'payment_method' => ['required', 'in:Cash,GCash'],
-            'reference_number' => ['nullable', 'required_if:payment_method,GCash', 'string', 'max:100'],
+            'reference_number' => ['nullable', 'required_if:payment_method,GCash', 'digits_between:1,13'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'integer', 'distinct', 'exists:products,id'],
             'items.*.quantity' => ['required', 'numeric', 'min:0.01', 'max:99999999.99', 'decimal:0,2'],

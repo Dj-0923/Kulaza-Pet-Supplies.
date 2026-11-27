@@ -34,7 +34,7 @@ include resource_path('views/layouts/header.php');
             </div>
             <div id="gcashReferenceWrap" class="<?= old('payment_method') === 'GCash' ? '' : 'hidden' ?>">
                 <label class="lbl" for="reference_number">GCash Reference Number</label>
-                <input id="reference_number" name="reference_number" type="text" value="<?= e(old('reference_number')) ?>" class="inp" maxlength="100" autocomplete="off" placeholder="Enter GCash reference number" <?= old('payment_method') === 'GCash' ? 'required' : '' ?>>
+                <input id="reference_number" name="reference_number" type="text" value="<?= e(old('reference_number')) ?>" class="inp" maxlength="13" inputmode="numeric" pattern="[0-9]{1,13}" autocomplete="off" placeholder="Enter digits only, no spaces" <?= old('payment_method') === 'GCash' ? 'required' : '' ?>>
             </div>
         </div>
         <div id="rows" class="mb-4"></div>

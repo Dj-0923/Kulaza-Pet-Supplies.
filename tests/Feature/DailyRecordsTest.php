@@ -63,6 +63,9 @@ test('gcash sales require and save a reference number', function () {
         ->assertOk()
         ->assertSee('id="gcashReferenceWrap" class="hidden"', false)
         ->assertSee('name="reference_number"', false)
+        ->assertSee('maxlength="13"', false)
+        ->assertSee('inputmode="numeric"', false)
+        ->assertSee('pattern="[0-9]{1,13}"', false)
         ->assertSee('updateGcashReferenceField()', false);
 
     $this->from(route('sales.create'))->post(route('sales.store'), [
@@ -70,6 +73,18 @@ test('gcash sales require and save a reference number', function () {
         'items' => [['product_id' => $product->id, 'quantity' => 1]],
     ])->assertRedirect(route('sales.create'))
         ->assertSessionHasErrors('reference_number');
+
+    expect(Transaction::count())->toBe(0)
+        ->and($product->fresh()->stock)->toBe(5.0);
+
+    foreach (['12345678901234', '1234 567 890123'] as $invalidReference) {
+        $this->from(route('sales.create'))->post(route('sales.store'), [
+            'payment_method' => 'GCash',
+            'reference_number' => $invalidReference,
+            'items' => [['product_id' => $product->id, 'quantity' => 1]],
+        ])->assertRedirect(route('sales.create'))
+            ->assertSessionHasErrors('reference_number');
+    }
 
     expect(Transaction::count())->toBe(0)
         ->and($product->fresh()->stock)->toBe(5.0);
@@ -252,7 +267,7 @@ test('sales report exposes responsive filters and reports matching category and 
     $this->post(route('sales.store'), [
         'customer_name' => 'GCash Customer',
         'payment_method' => 'GCash',
-        'reference_number' => 'GCASH-654321',
+        'reference_number' => '1234567890123',
         'items' => [['product_id' => $catFood->id, 'quantity' => 1]],
     ])->assertRedirect(route('sales.create'));
 
