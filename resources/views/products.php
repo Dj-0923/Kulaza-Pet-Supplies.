@@ -16,10 +16,10 @@ include resource_path('views/layouts/header.php');
 <?php if ($errors->any()): ?><div class="card text-red-300 mb-4"><?php foreach ($errors->all() as $error): ?><p><?= e($error) ?></p><?php endforeach; ?></div><?php endif; ?>
 <div class="flex flex-wrap gap-2 mb-4" id="cats" style="display:<?= $products ? 'flex' : 'none' ?>"></div>
 <div class="card">
-    <div class="flex gap-3 mb-4">
+    <div class="flex flex-col gap-3 mb-4 sm:flex-row">
         <input type="text" id="search" placeholder="Search product..." class="inp">
         <?php if(!$isStaff): ?>
-            <button type="button" id="openAdd" class="btn whitespace-nowrap">+ Add Product</button>
+            <button type="button" id="openAdd" class="btn whitespace-nowrap sm:w-auto">+ Add Product</button>
         <?php endif; ?>
     </div>
     <div class="overflow-x-auto">
@@ -132,7 +132,7 @@ include resource_path('views/layouts/header.php');
                 </select>
                 <p class="text-xs text-gray-400 mt-1">Price and stock are tracked using the selected unit.</p>
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div><label id="priceLabel" class="lbl" for="pp">Price per piece</label><input id="pp" name="price" type="number" min="0" step="0.01" value="<?= e(old('price')) ?>" class="inp" placeholder="Enter price per piece" required></div>
                 <div><label id="stockLabel" class="lbl" for="pk">Stock (pcs)</label><input id="pk" name="stock" type="number" min="0" step="1" value="<?= e(old('stock')) ?>" class="inp" placeholder="Enter pieces in stock" required></div>
             </div>
@@ -199,7 +199,7 @@ include resource_path('views/layouts/header.php');
             <div class="flex items-center gap-3">
                 <img id="stockImagePreview" alt="Product image preview" class="hidden h-20 w-20 shrink-0 rounded-lg border border-[#394139] object-cover">
                 <div id="stockImagePlaceholder" class="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border border-[#394139] bg-[#0b0e0b] text-xs text-gray-500">No image</div>
-                <input id="stockImage" name="image" type="file" accept="image/*" class="inp file:mr-2 file:rounded-md file:border-0 file:bg-[#243024] file:px-2 file:py-2 file:text-xs file:text-white">
+                <input id="stockImage" name="image" type="file" accept="image/*" class="inp min-w-0 flex-1 file:mr-2 file:rounded-md file:border-0 file:bg-[#243024] file:px-2 file:py-2 file:text-xs file:text-white">
             </div>
             <p class="mt-1 text-xs text-gray-500">Choose a new image to replace the current one. Maximum 5 MB.</p>
         </div>

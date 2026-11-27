@@ -149,6 +149,8 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
 .pr-period-option:hover,.pr-period-option[aria-selected="true"]{background:#1a2a1a}
 .pr-pager a.off{opacity:.4;pointer-events:none}
 @media(max-width:900px){.pr-filters{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.pr-filters{grid-template-columns:1fr}.pr-go,.pr-reset{width:100%}}
+@media(max-width:560px){.pr-pager{align-items:stretch;flex-direction:column;gap:12px}.pr-pager>div{justify-content:space-between}}
 </style>
 
 <!-- Filters -->
@@ -271,7 +273,7 @@ $chart = ['series' => $series, 'start' => $start, 'end' => $end, 'allTime' => $m
         <div class="pr-empty">No Data</div>
     <?php else: ?>
         <div style="overflow-x:auto">
-        <table class="tbl">
+        <table class="tbl min-w-[760px]">
             <tr><th>Date</th><th>Product</th><th>Category</th><th>Old price</th><th>New price</th><th>Change</th><th>Changed by</th><th>Actions</th></tr>
             <?php foreach ($pageRows as $r):
                 $ch = $r['new_price'] - $r['old_price'];

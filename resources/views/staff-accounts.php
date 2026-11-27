@@ -24,7 +24,7 @@ include resource_path('views/layouts/header.php');
             <p class="text-xs text-gray-500 mt-1">Only @gmail.com addresses are accepted. We will email the username and a one-time password setup link.</p>
         </div>
     </div>
-    <div class="flex justify-between items-end mt-4">
+    <div class="flex flex-col justify-between gap-4 mt-4 sm:flex-row sm:items-end">
         <div class="text-xs"><p class="mb-2">Staff can open</p>
             <?php foreach(['Dashboard','Record sale','Products (view only)','Own transactions'] as $p): ?>
                 <span class="inline-block px-3 py-1 mr-1 rounded-full bg-[#0b0e0b] border border-[#1f271f]"><?= e($p) ?></span>
@@ -44,7 +44,7 @@ include resource_path('views/layouts/header.php');
             </select>
         </label>
     </div>
-    <table class="tbl"><thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th style="text-align:right">Action</th></tr></thead>
+    <table class="tbl min-w-[640px]"><thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th style="text-align:right">Action</th></tr></thead>
         <tbody id="staff-account-rows" data-status-url="<?= e(route('staff.statuses')) ?>">
         <?php foreach ($staffAccounts as $staffAccount): ?>
             <tr data-staff-id="<?= e($staffAccount->id) ?>" data-account-active="<?= $staffAccount->is_active ? 'true' : 'false' ?>">

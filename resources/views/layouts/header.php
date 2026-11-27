@@ -15,7 +15,7 @@
     <script src="<?= e(asset('js/theme.js')) ?>"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;900&display=swap" rel="stylesheet">
     <style>
-        .card{background:#141914;border:1px solid #1f271f;border-radius:14px;padding:18px}
+        .card{min-width:0;background:#141914;border:1px solid #1f271f;border-radius:14px;padding:18px}
         @keyframes page-enter{from{opacity:0;transform:translateY(18px) scale(.985);filter:blur(4px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
         .page-enter{animation:page-enter .65s cubic-bezier(.2,.75,.25,1) both}
         @media(prefers-reduced-motion:reduce){.page-enter{animation:none}}
@@ -44,7 +44,14 @@
     </style>
 </head>
 <body class="bg-[#0b0e0b] text-white flex min-h-screen">
-    <aside class="w-56 bg-black p-4 shrink-0 flex flex-col sticky top-0 h-screen self-start overflow-y-auto">
+    <header class="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-3 border-b border-[#1f271f] bg-[#0b0e0b] px-4 pr-24 md:hidden">
+        <button type="button" id="mobile-nav-toggle" class="btn-dark !p-2" aria-label="Open navigation menu" aria-controls="app-sidebar" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <span class="truncate font-semibold">Kulaza Pet Supplies</span>
+    </header>
+    <button type="button" id="mobile-nav-backdrop" class="hidden fixed inset-0 z-[60] bg-black/70 md:hidden" aria-label="Close navigation menu" tabindex="-1"></button>
+    <aside id="app-sidebar" aria-label="Main navigation" class="fixed inset-y-0 left-0 z-[65] flex h-screen w-64 shrink-0 -translate-x-full flex-col overflow-y-auto bg-black p-4 transition-transform duration-200 md:sticky md:top-0 md:w-56 md:translate-x-0 md:self-start">
         <div class="pb-4 mb-4 border-b border-gray-700 flex justify-center">
             <div class="brand-lockup" role="img" aria-label="Kulaza Pet Supplies">
                 <img src="<?= e(asset('images/logo-icon.png')) ?>" alt="" class="brand-icon">
@@ -99,7 +106,7 @@
         <svg data-theme-icon="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6.5 6.5 0 0 0 8.268 8.268c.344-.215.825-.003.803.401"/></svg>
         <svg data-theme-icon="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
     </button>
-    <main data-page="<?= e(strtolower(str_replace(' ', '-', $pageTitle))) ?>" class="<?= session('login_animation') ? 'page-enter' : '' ?> flex-1 p-8">
+    <main data-page="<?= e(strtolower(str_replace(' ', '-', $pageTitle))) ?>" class="<?= session('login_animation') ? 'page-enter' : '' ?> min-w-0 flex-1 p-8">
         <h1 class="text-2xl font-bold"><?= e($pageTitle) ?></h1>
         <p class="text-xs text-gray-400 mb-6"><?= e(now()->format('l, F d, Y')) ?></p>
 <?php

@@ -139,6 +139,33 @@ test('new transaction numbers are 12 characters and long existing numbers are co
         ->assertSee('title="INV-01M6JYCZ8M659H28X2JDH67252"', false);
 });
 
+test('authenticated pages include an accessible mobile navigation drawer', function () {
+    $this->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('id="mobile-nav-toggle"', false)
+        ->assertSee('aria-controls="app-sidebar"', false)
+        ->assertSee('id="mobile-nav-backdrop"', false)
+        ->assertSee('id="app-sidebar"', false)
+        ->assertSee('event.key === \'Escape\'', false);
+});
+
+test('dashboard scales long metric values to fit their cards', function () {
+    Transaction::create([
+        'invoice' => 'INV-LONG-METRIC',
+        'customer_name' => 'Walk-in Customer',
+        'payment_method' => 'Cash',
+        'total' => 123456789.99,
+        'sold_at' => today(),
+    ]);
+
+    $this->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('₱123,456,789.99')
+        ->assertSee('container-type:inline-size', false)
+        ->assertSee('font-size:clamp(.875rem, 12.67cqw, 1.5rem)', false)
+        ->assertSee('overflow-wrap:anywhere', false);
+});
+
 test('card is not offered or accepted as a payment method', function () {
     $product = createSaleProduct();
 
@@ -632,6 +659,36 @@ test('price records page renders records and chart data', function () {
         ->assertSee("{month: 'short', timeZone: 'UTC'}", false)
         ->assertSee($firstVisibleMonth)
         ->assertSee($currentMonth);
+});
+
+test('price records table paginates ten changes per page', function () {
+    $product = createSaleProduct();
+
+    foreach (range(1, 11) as $number) {
+        PriceRecord::create([
+            'product_id' => $product->id,
+            'product_name' => 'Product '.$number,
+            'category' => 'Pet Food',
+            'old_price' => 10 + $number,
+            'new_price' => 11 + $number,
+            'changed_by' => 'Admin',
+            'changed_at' => now()->toDateString(),
+        ]);
+    }
+
+    $firstPage = $this->get(route('price-records'))
+        ->assertOk()
+        ->assertSee('Showing 1-10 of 11')
+        ->assertSee('href="?page=2"', false);
+    preg_match('/<!-- Records table -->(.*?)<div class="pr-pager">/s', $firstPage->getContent(), $firstPageTable);
+    expect(substr_count($firstPageTable[1], '<tr>'))->toBe(11);
+
+    $secondPage = $this->get(route('price-records', ['page' => 2]))
+        ->assertOk()
+        ->assertSee('Showing 11-11 of 11')
+        ->assertSee('href="?page=1"', false);
+    preg_match('/<!-- Records table -->(.*?)<div class="pr-pager">/s', $secondPage->getContent(), $secondPageTable);
+    expect(substr_count($secondPageTable[1], '<tr>'))->toBe(2);
 });
 
 test('price chart animates its line on load and respects reduced motion', function () {

@@ -19,7 +19,7 @@ include resource_path('views/layouts/header.php');
     <div class="card lg:col-span-2">
         <input type="text" id="ss" placeholder="Search product..." class="inp mb-4">
         <div class="flex flex-wrap gap-2 mb-4" id="scats" style="display:<?= $products ? 'flex' : 'none' ?>"></div>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="sgrid"></div>
+        <div class="grid grid-cols-1 min-[400px]:grid-cols-2 md:grid-cols-3 gap-3" id="sgrid"></div>
     </div>
 
     <div class="card lg:sticky lg:top-6">
@@ -39,7 +39,7 @@ include resource_path('views/layouts/header.php');
         </div>
         <div id="rows" class="mb-4"></div>
         <div id="hidden"></div>
-        <div class="flex justify-between bg-[#1a2a1a] rounded-lg px-3 py-2 mb-4"><span>Total Sale</span><span id="tot" class="font-bold">₱0.00</span></div>
+        <div class="flex justify-between gap-3 bg-[#1a2a1a] rounded-lg px-3 py-2 mb-4"><span>Total Sale</span><span id="tot" class="min-w-0 break-all text-right font-bold">₱0.00</span></div>
         <button type="submit" class="btn block w-full">Save Transaction</button>
     </div>
 </form>

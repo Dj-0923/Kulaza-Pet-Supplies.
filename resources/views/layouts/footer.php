@@ -6,6 +6,42 @@
 <div id="toast" class="fixed bottom-6 right-6 bg-[#2e7d32] px-4 py-2 rounded-lg text-sm hidden"></div>
 <script>
     const peso = n => '₱' + Number(n).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    (() => {
+        const toggle = document.getElementById('mobile-nav-toggle');
+        const sidebar = document.getElementById('app-sidebar');
+        const backdrop = document.getElementById('mobile-nav-backdrop');
+        if (!toggle || !sidebar || !backdrop) return;
+
+        const closeMenu = (restoreFocus = false) => {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.setAttribute('aria-label', 'Open navigation menu');
+            document.body.classList.remove('overflow-hidden');
+            if (restoreFocus) toggle.focus();
+        };
+        const openMenu = () => {
+            sidebar.classList.remove('-translate-x-full');
+            backdrop.classList.remove('hidden');
+            toggle.setAttribute('aria-expanded', 'true');
+            toggle.setAttribute('aria-label', 'Close navigation menu');
+            document.body.classList.add('overflow-hidden');
+            sidebar.querySelector('a')?.focus();
+        };
+
+        toggle.addEventListener('click', () => {
+            if (toggle.getAttribute('aria-expanded') === 'true') closeMenu();
+            else openMenu();
+        });
+        backdrop.addEventListener('click', () => closeMenu(true));
+        sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', () => closeMenu()));
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') closeMenu(true);
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) closeMenu();
+        });
+    })();
     document.querySelectorAll('input[type=date],input[type=month]').forEach(i => {
         const w = document.createElement('span'); w.className = 'dw';
         i.parentNode.insertBefore(w, i); w.appendChild(i);

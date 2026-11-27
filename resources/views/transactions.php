@@ -25,7 +25,7 @@ include resource_path('views/layouts/header.php');
     </div>
     <p id="transaction-filter-status" class="text-xs text-gray-400 mb-3" role="status" aria-live="polite">Showing <?= count($transactions) ?> of <?= count($transactions) ?> transactions</p>
     <div class="overflow-x-auto">
-    <table class="tbl"><thead><tr><th>Transaction No.</th><th>Customer</th><th>Items</th><th>Payment Method</th><th>Total</th><th>Date</th><?php if (!$isStaff): ?><th style="text-align:right">Actions</th><?php endif; ?></tr></thead><tbody id="transaction-rows">
+    <table class="tbl min-w-[720px]"><thead><tr><th>Transaction No.</th><th>Customer</th><th>Items</th><th>Payment Method</th><th>Total</th><th>Date</th><?php if (!$isStaff): ?><th style="text-align:right">Actions</th><?php endif; ?></tr></thead><tbody id="transaction-rows">
         <?php if (!$transactions): ?>
             <tr><td colspan="<?= $isStaff ? 6 : 7 ?>" class="text-gray-400 text-center" style="padding:3rem 0">No transactions yet.</td></tr>
         <?php endif; ?>

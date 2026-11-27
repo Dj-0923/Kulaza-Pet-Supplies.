@@ -17,15 +17,15 @@ include resource_path('views/layouts/header.php');
 <?php if (!$ok): ?>
 <div class="card">You do not have access to this page.</div>
 <?php else: ?>
-<form class="card flex flex-wrap gap-3 items-end mb-4" id="reportFilters" aria-label="Filter sales reports">
+<form class="card grid grid-cols-1 gap-3 items-end mb-4 sm:grid-cols-2 xl:grid-cols-6" id="reportFilters" aria-label="Filter sales reports">
     <div><label class="lbl" for="rf">Date From</label><input id="rf" type="date" name="from" class="inp"></div>
     <div><label class="lbl" for="rt">Date To</label><input id="rt" type="date" name="to" class="inp"></div>
     <div><label class="lbl" for="rc">Category</label>
         <select id="rc" name="category" class="inp"><option value="">All Categories</option><?php foreach($cats as $c): ?><option value="<?= e($c) ?>"><?= e($c) ?></option><?php endforeach; ?></select></div>
     <div><label class="lbl" for="rp">Payment Method</label>
         <select id="rp" name="payment" class="inp"><option value="">All Payment Methods</option><?php foreach($payments as $method): ?><option value="<?= e($method) ?>"><?= e($method) ?></option><?php endforeach; ?></select></div>
-    <button type="submit" id="apply" class="btn">Apply Filters</button>
-    <button type="reset" id="reset" class="btn-dark">Reset</button>
+    <button type="submit" id="apply" class="btn w-full">Apply Filters</button>
+    <button type="reset" id="reset" class="btn-dark w-full">Reset</button>
 </form>
 <p id="reportSelection" class="text-xs text-gray-400 mb-4" role="status"></p>
 <div id="reportPrompt" class="card text-sm text-gray-400 mb-4 hidden">No sales records yet.</div>
@@ -44,6 +44,8 @@ include resource_path('views/layouts/header.php');
     .report-bar.is-animated {
         animation: report-bar-grow 700ms cubic-bezier(.2,.75,.25,1) both;
     }
+    #chart > div { min-width: 0; }
+    #chart > div > span:first-child { max-width: 100%; overflow-wrap: anywhere; text-align: center; }
     @media (prefers-reduced-motion: reduce) {
         .report-bar.is-animated { animation: none; }
     }

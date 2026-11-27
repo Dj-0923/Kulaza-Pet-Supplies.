@@ -12,7 +12,7 @@ include resource_path('views/layouts/header.php');
     <label class="sr-only" for="catalogSearch">Search products</label>
     <input id="catalogSearch" type="search" class="inp md:max-w-sm" placeholder="Search products or categories">
 </div>
-<div id="catalogProducts" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+<div id="catalogProducts" class="grid grid-cols-1 min-[400px]:grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
     <?php foreach ($products as $product):
         $stock = $product['unit'] === 'kg'
             ? rtrim(rtrim(number_format((float) $product['stock'], 2, '.', ''), '0'), '.')

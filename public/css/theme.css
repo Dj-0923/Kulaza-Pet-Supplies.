@@ -26,6 +26,12 @@ a.btn-red {
     transition: transform 160ms ease, filter 160ms ease, box-shadow 160ms ease;
 }
 
+button[data-toggle-password],
+button.password-visibility-toggle {
+    transition: none !important;
+    animation: none !important;
+}
+
 .pill {
     transition: background-color 220ms ease, border-color 220ms ease, color 220ms ease;
 }
@@ -52,6 +58,15 @@ a.btn-dark:active,
 a.btn-ghost:active,
 a.btn-red:active {
     transform: translateY(0) scale(.98);
+    box-shadow: none;
+}
+
+button[data-toggle-password]:hover:not(:disabled),
+button[data-toggle-password]:active:not(:disabled),
+button.password-visibility-toggle:hover:not(:disabled),
+button.password-visibility-toggle:active:not(:disabled) {
+    transform: translateY(-50%) !important;
+    filter: none;
     box-shadow: none;
 }
 
@@ -732,6 +747,52 @@ html:not(.light-mode) body.auth-scene-page > .night-landscape {
     .day-sun { top: 7%; right: 7%; width: 48px; }
     .day-animal { font-size: 34px; }
     .night-animal { transform: scale(.82); }
+}
+
+@media (max-width: 767px) {
+    body:not(.auth-scene-page) {
+        overflow-x: hidden;
+    }
+
+    main[data-page] {
+        padding: 5rem 1rem 1.5rem !important;
+    }
+
+    main[data-page] > h1 {
+        padding-right: 4.5rem;
+        overflow-wrap: anywhere;
+    }
+
+    main[data-page] .card {
+        padding: 14px;
+    }
+
+    .theme-toggle {
+        top: 7px;
+        right: 12px;
+    }
+
+    body.auth-scene-page > form,
+    body.auth-scene-page > main {
+        padding-inline: clamp(1.25rem, 8vw, 3rem);
+    }
+
+    #toast,
+    #stockUpdateToast,
+    #transactionToast {
+        right: 1rem;
+        bottom: 1rem;
+        left: 1rem;
+        max-width: none;
+    }
+
+    #modal .card,
+    #stockModal .card,
+    #deleteModal .card,
+    #deleteAccountModal .card,
+    #transactionDetailsModal .card {
+        padding: 16px !important;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

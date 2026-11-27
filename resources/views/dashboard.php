@@ -12,7 +12,7 @@ include resource_path('views/layouts/header.php');
 <?php if (!$ok): ?>
 <div class="card">You do not have access to this page.</div>
 <?php else: ?><?php  $staff = $isStaff;  ?>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
     <?php $metrics = [
         ["Today's Sale", '₱' . number_format($todaySale, 2)],
         [$staff ? 'Transaction Today' : 'Transactions Today', number_format($todayCount)],
@@ -20,13 +20,16 @@ include resource_path('views/layouts/header.php');
         ['Total Sale', '₱' . number_format($totalSale, 2)],
     ]; ?>
     <?php foreach ($metrics as [$k, $v]): ?>
-        <div class="card"><p class="text-xs text-gray-400"><?= e($k) ?></p><p class="text-2xl font-bold"><?= e($v) ?></p></div>
+        <?php preg_match_all('/./us', $v, $numberCharacters); ?>
+        <?php $fontScale = 190 / max(1, count($numberCharacters[0])); ?>
+        <div class="card min-w-0" style="container-type:inline-size"><p class="text-xs text-gray-400"><?= e($k) ?></p><p class="text-2xl font-bold break-words" style="font-size:clamp(.875rem, <?= e(number_format($fontScale, 2, '.', '')) ?>cqw, 1.5rem);overflow-wrap:anywhere"><?= e($v) ?></p></div>
     <?php endforeach; ?>
 </div>
 <div class="grid md:grid-cols-3 gap-4">
     <div class="card md:col-span-2">
         <h2 class="font-semibold mb-2">Recent transaction</h2>
-        <table class="tbl"><tr><th>Transaction No.</th><th>Customer</th><th>Total</th><th>Date</th></tr>
+        <div class="overflow-x-auto">
+        <table class="tbl min-w-[560px]"><tr><th>Transaction No.</th><th>Customer</th><th>Total</th><th>Date</th></tr>
             <?php if ($latest): ?>
             <?php $invoice = $latest->invoice; $displayInvoice = substr($invoice, -12); ?>
             <tr><td class="font-semibold" title="<?= e($invoice) ?>"><?= e($displayInvoice) ?></td><td><?= e($latest->customer_name) ?></td><td>₱<?= e(number_format($latest->total, 2)) ?></td><td><?= e($latest->sold_at) ?></td></tr>
@@ -34,6 +37,7 @@ include resource_path('views/layouts/header.php');
             <tr><td colspan="4" class="text-gray-400 text-center" style="padding:2rem 0">No transactions yet.</td></tr>
             <?php endif; ?>
         </table>
+        </div>
     </div>
     <div class="card space-y-2">
         <h2 class="font-semibold">Quick Actions</h2>
