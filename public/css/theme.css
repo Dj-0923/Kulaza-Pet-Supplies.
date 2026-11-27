@@ -755,7 +755,7 @@ html:not(.light-mode) body.auth-scene-page > .night-landscape {
     }
 
     main[data-page] {
-        padding: 5rem 1rem 1.5rem !important;
+        padding: 6rem 1rem 1.5rem !important;
     }
 
     main[data-page] > h1 {

@@ -146,6 +146,7 @@ test('authenticated pages include an accessible mobile navigation drawer', funct
         ->assertSee('aria-controls="app-sidebar"', false)
         ->assertSee('id="mobile-nav-backdrop"', false)
         ->assertSee('id="app-sidebar"', false)
+        ->assertSee('pt-24 md:pt-8', false)
         ->assertSee('event.key === \'Escape\'', false);
 });
 
